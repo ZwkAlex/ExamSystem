@@ -1,0 +1,103 @@
+DROP TABLE  IF EXISTS User;
+CREATE TABLE User(
+id VARCHAR(20)  NOT NULL PRIMARY KEY,
+password VARCHAR(20) NOT NULL ,
+role VARCHAR(20)  NOT NULL
+);
+INSERT INTO User VALUES('1','1',"ROLE_STUDENT");
+INSERT INTO User VALUES('2','1',"ROLE_TEACHER");
+SELECT * FROM User;
+
+
+DROP TABLE IF EXISTS student;
+CREATE TABLE student(
+sid VARCHAR(20) NOT NULL PRIMARY KEY,
+sname VARCHAR(20) NOT NULL,
+college VARCHAR(20),
+smajorid VARCHAR(20)
+);
+INSERT INTO student VALUES('1', 'sss', 'aaaa', 'bbb');
+SELECT * FROM student;
+
+DROP TABLE IF EXISTS teacher;
+CREATE TABLE teacher(
+tid VARCHAR(20) NOT NULL PRIMARY KEY,
+tname VARCHAR(20) NOT NULL
+);
+INSERT INTO teacher VALUES('2', 'ffff');
+SELECT * FROM teacher;
+
+DROP TABLE IF EXISTS s_e;
+CREATE TABLE s_e(
+sid VARCHAR(20) NOT NULL,
+examid VARCHAR(20) NOT NULL,
+status INT DEFAULT 0,
+score DOUBLE DEFAULT -1
+);
+INSERT INTO s_e(sid,examid) VALUES('1', '1');
+SELECT * FROM s_e;
+
+DROP TABLE IF EXISTS course;
+CREATE TABLE course(
+courseid VARCHAR(20)  NOT NULL PRIMARY KEY,
+tid VARCHAR(20),
+coursename VARCHAR(20) DEFAULT NULL,
+description VARCHAR(255) DEFAULT NULL
+);
+INSERT INTO course VALUES('1','2', 'ffff','description');
+SELECT * FROM course;
+
+DROP TABLE IF EXISTS exam;
+CREATE TABLE exam(
+examid VARCHAR(20)  NOT NULL PRIMARY KEY,
+courseid VARCHAR(20),
+startdate TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
+enddate TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
+duration INT
+);
+INSERT INTO exam VALUES('1','1', now(), date_add(now(), interval 1 day),60);
+SELECT * FROM exam;
+
+DROP TABLE IF EXISTS question;
+CREATE TABLE question(
+questionid VARCHAR(20)  NOT NULL PRIMARY KEY,
+examid  VARCHAR(20),
+type INT NOT NULL,
+title VARCHAR(255) NOT NULL,
+options TEXT DEFAULT NULL,
+score DOUBLE
+);
+INSERT INTO question VALUES('1','1',2 , 'title','option1_#_option2',1);
+SELECT * FROM question;
+
+DROP TABLE IF EXISTS answer;
+CREATE TABLE answer(
+examid  VARCHAR(20) NOT NULL,
+questionid VARCHAR(20)  NOT NULL ,
+answer VARCHAR(20)
+);
+INSERT INTO answer VALUES('1','1', 'A_#_B');
+SELECT * FROM answer;
+
+
+DROP TABLE IF EXISTS timer;
+CREATE TABLE timer(
+sid VARCHAR(20) NOT NULL,
+examid  VARCHAR(20)  NOT NULL,
+endtime TIMESTAMP
+);
+INSERT INTO timer VALUES('1','1',date_add(now(), interval 1 day));
+SELECT * FROM timer;
+
+DROP TABLE IF EXISTS studentanswer;
+CREATE TABLE studentanswer(
+sid VARCHAR(20) NOT NULL,
+examid  VARCHAR(20)  NOT NULL,
+questionid VARCHAR(20)  NOT NULL,
+answer TEXT,
+ismarked BOOLEAN DEFAULT false,
+score DOUBLE DEFAULT -1
+);
+INSERT INTO studentanswer(sid,examid,questionid,answer) VALUES('1','1','1','1,2');
+SELECT * FROM studentanswer;
+
