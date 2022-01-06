@@ -11,7 +11,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @SpringBootApplication
 @MapperScan("com.group.exam.dao")
 @ServletComponentScan
-@EnableRedisHttpSession
+//@EnableRedisHttpSession
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ExamApplication {
 

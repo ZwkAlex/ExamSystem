@@ -39,12 +39,16 @@ public class ExamUtil {
     public static String Score2String(double score,int status){
         switch(ExamStatus.get(status)){
             case MARKED:
-                return String.format("%.2f", score);
+                return String.format("%.2f 分", score);
             case CANCELLED:
                 return "取消";
             default:
                 return "-";
         }
+    }
+
+    public static String Score2String(double score){
+        return Score2String( score, ExamStatus.MARKED.getValue());
     }
 
     public static String Status2String(int status){

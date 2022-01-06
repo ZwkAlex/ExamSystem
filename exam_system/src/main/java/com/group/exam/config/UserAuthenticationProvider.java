@@ -1,7 +1,6 @@
 package com.group.exam.config;
 
 import com.group.exam.model.entity.SecurityUser;
-import com.group.exam.service.impl.LoginService;
 import com.group.exam.service.impl.UserService;
 
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -20,9 +19,7 @@ import java.util.Iterator;
 public class UserAuthenticationProvider implements AuthenticationProvider {
 
     @Resource
-    private UserService userDetailsService;
-    @Resource
-    private LoginService loginService;
+    private UserService userService;
 
 
     @Override
@@ -41,9 +38,9 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("输入角色为空！");
         }
 
-        SecurityUser userInfo = (SecurityUser) userDetailsService.loadUserByUsername(id);
+        SecurityUser userInfo = (SecurityUser) userService.loadUserByUsername(id);
 
-        if (!loginService.checkRole(userInfo.getCurrentUserInfo(),role)) {
+        if (!userService.checkRole(userInfo.getCurrentUserInfo(),role)) {
             throw new BadCredentialsException("当前身份认证失败！请确认选择了正确的登录入口。");
         }
 

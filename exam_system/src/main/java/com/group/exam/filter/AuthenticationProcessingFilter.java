@@ -34,7 +34,7 @@ public class AuthenticationProcessingFilter extends AbstractAuthenticationProces
      * @param userAuthenticationFailureHandler : 认证失败处理
      */
     public AuthenticationProcessingFilter(CusAuthenticationManager authenticationManager, UserAuthenticationSuccessHandler userAuthenticationSuccessHandler, UserAuthenticationFailureHandler userAuthenticationFailureHandler) {
-        super(new AntPathRequestMatcher("/login", "POST"));
+        super(new AntPathRequestMatcher("/user/login", "POST"));
         this.setAuthenticationManager(authenticationManager);
         this.setAuthenticationSuccessHandler(userAuthenticationSuccessHandler);
         this.setAuthenticationFailureHandler(userAuthenticationFailureHandler);

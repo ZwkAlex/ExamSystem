@@ -15,6 +15,6 @@ public class CusAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        ResponseUtil.denied(response,ResponseUtil.success("权限拒绝，你无权访问。"));
+        ResponseUtil.denied(response,ResponseUtil.error("权限拒绝，你无权访问。"));
     }
 }

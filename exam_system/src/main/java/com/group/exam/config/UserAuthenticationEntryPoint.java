@@ -20,7 +20,7 @@ public final class UserAuthenticationEntryPoint implements AuthenticationEntryPo
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
-        response.sendRedirect("/login.html");
+        response.sendRedirect("/login");
     }
 
 }

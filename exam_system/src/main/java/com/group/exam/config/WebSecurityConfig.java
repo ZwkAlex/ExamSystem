@@ -37,11 +37,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/student/**").hasRole("STUDENT")
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(userAuthenticationEntryPoint)
-                .and().exceptionHandling().accessDeniedPage("/error_page.html")
-//                .and().exceptionHandling().accessDeniedHandler(cusAccessDeniedHandler)
-                .and().formLogin().loginPage("/login.html").loginProcessingUrl("/login")
-                .and().rememberMe()
-                .and().csrf().disable();
+//                .and().exceptionHandling().accessDeniedPage("/error_page.html")
+                .and().exceptionHandling().accessDeniedHandler(cusAccessDeniedHandler)
+                .and().formLogin().loginProcessingUrl("/user/login")
+                .and().rememberMe();
+        http.sessionManagement()
+                .invalidSessionUrl("/login")
+                .maximumSessions(1).maxSessionsPreventsLogin(true);
+        http.csrf().disable();
         http.addFilterAt(authenticationProcessingFilter, UsernamePasswordAuthenticationFilter.class);
     }
     @Override

@@ -10,7 +10,6 @@ import com.group.exam.model.requestModel.*;
 import com.group.exam.model.responseModel.*;
 import com.group.exam.service.intf.TeacherServiceInterface;
 import com.group.exam.util.ExamUtil;
-import com.group.exam.model.cusEnum.QuestionType;
 import com.group.exam.util.ResponseUtil;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +20,8 @@ import java.util.List;
 @Service
 public class TeacherService implements  TeacherServiceInterface {
 
+    @Resource
+    private UserMapper userMapper;
     @Resource
     private CourseMapper courseMapper;
     @Resource
@@ -40,15 +41,16 @@ public class TeacherService implements  TeacherServiceInterface {
 
 
     @Override
-    public ResponseModel addStudent(Student student) {
-        return studentMapper.insertStudent(student) == 1?
+    public ResponseModel addStudent(AddStudentRequest request) {
+        return studentMapper.insertStudent(request) == 1&&
+                userMapper.insertStudentUser(request.getsID(),request.getPassword()) == 1?
                 ResponseUtil.success("添加成功"):
                 ResponseUtil.error("添加失败");
     }
 
     @Override
     public ResponseModel deleteStudent(String sid) {
-        return studentMapper.deleteStudent(sid) == 1?
+        return studentMapper.deleteStudent(sid) == 1&&userMapper.deleteStudentUser(sid)==1?
                 ResponseUtil.success("删除成功"):
                 ResponseUtil.error("删除失败");
     }
@@ -131,6 +133,7 @@ public class TeacherService implements  TeacherServiceInterface {
     @Override
     public ResponseModel getTeacherExamList(String tID) {
         try {
+            if(tID == null) return ResponseUtil.error("错误的请求");
             List<TeacherExamListResponse> examListResponseList = new ArrayList<>();
             List<Course> courseList = courseMapper.findAllByTID(tID);
             for (Course course : courseList) {
@@ -142,7 +145,7 @@ public class TeacherService implements  TeacherServiceInterface {
                     TeacherExamResponse temp = new TeacherExamResponse();
                     temp.setExamID(exam.getExamID());
                     temp.setStartDate(exam.getStartDate().toString());
-                    temp.setStartDate(exam.getEndDate().toString());
+                    temp.setEndDate(exam.getEndDate().toString());
                     temp.setDuration(ExamUtil.Sec2String(exam.getDuration()));
                     temp.setTotalScore(String.format("%.2f 分", exam.getTotalScore()));
                     examList.add(temp);
@@ -158,16 +161,53 @@ public class TeacherService implements  TeacherServiceInterface {
     }
 
     @Override
-    public ResponseModel getStudentExamList(StudentExamListRequest studentExamListRequest) {
+    public ResponseModel getTeacherExamInfo(TeacherExamInfoRequest teacherExamInfoRequest) {
         try {
-            List<StudentExam> s_eList = studentExamMapper.findAllByExamID(studentExamListRequest.getExamID());
+            TeacherExamInfoResponse teacherExamInfoResponse = new TeacherExamInfoResponse();
+            Exam exam = examMapper.findByExamID(teacherExamInfoRequest.getExamID());
+            Course course = courseMapper.findByCourseID(exam.getCourseID());
+            teacherExamInfoResponse.setCourseName(course.getCourseName());
+            teacherExamInfoResponse.setExamID(exam.getExamID());
+            teacherExamInfoResponse.setStartDate(exam.getStartDate().toString());
+            teacherExamInfoResponse.setEndDate(exam.getEndDate().toString());
+            teacherExamInfoResponse.setDuration(ExamUtil.Sec2String(exam.getDuration()));
+            teacherExamInfoResponse.setTotalScore(ExamUtil.Score2String(exam.getTotalScore()));
+            List<StudentExam> s_eList = studentExamMapper.findAllByExamID(teacherExamInfoRequest.getExamID());
+            int marked = 0, unfinished = 0, finished = 0;
+            for (StudentExam s_e : s_eList) {
+                switch (ExamStatus.get(s_e.getStatus())) {
+                    case MARKED:
+                        marked += 1;
+                        break;
+                    case MARKING:
+                    case FINISHED:
+                        finished += 1;
+                        break;
+                    case UNFINISHED:
+                        unfinished += 1;
+                        break;
+                }
+            }
+            teacherExamInfoResponse.setTotalNumber(marked + unfinished + finished);
+            teacherExamInfoResponse.setFinished(finished);
+            teacherExamInfoResponse.setUnFinished(unfinished);
+            teacherExamInfoResponse.setMarked(marked);
+            return ResponseUtil.success(teacherExamInfoResponse);
+        }catch (Exception e){
+            e.printStackTrace();
+            return  ResponseUtil.error("获取考试详情信息的过程中发生未知错误");
+        }
+    }
+
+    @Override
+    public ResponseModel getStudentExamList(TeacherExamInfoRequest teacherExamInfoRequest) {
+        try {
+            List<StudentExam> s_eList = studentExamMapper.findAllByExamID(teacherExamInfoRequest.getExamID());
             List<StudentNeedExam> studentNeedExamList = new ArrayList<>();
             for (StudentExam s_e : s_eList) {
-                StudentNeedExam temp = (StudentNeedExam) s_e;
-                Student s = studentMapper.findByID(s_e.getsID());
-                temp.setsName(s.getsName());
-                temp.setCollege(s.getCollege());
-                temp.setsMajorID(s.getsMajorID());
+                StudentNeedExam temp = new StudentNeedExam();
+                temp.set(s_e);
+                temp.set(studentMapper.findByID(s_e.getsID()));
                 studentNeedExamList.add(temp);
             }
             return ResponseUtil.success(studentNeedExamList);

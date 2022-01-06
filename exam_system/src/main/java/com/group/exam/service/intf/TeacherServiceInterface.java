@@ -6,7 +6,7 @@ import com.group.exam.model.requestModel.*;
 import com.group.exam.model.responseModel.ResponseModel;
 
 public interface TeacherServiceInterface {
-    ResponseModel addStudent(Student student);
+    ResponseModel addStudent(AddStudentRequest request);
     ResponseModel deleteStudent(String sid);
     ResponseModel updateStudent(Student student);
     ResponseModel addQuestion(QuestionRequest questionRequest);
@@ -17,7 +17,8 @@ public interface TeacherServiceInterface {
     ResponseModel updateCourse(Course course);
     ResponseModel assignExam(AssignMajorExamRequest assignMajorExamRequest);
     ResponseModel getTeacherExamList(String tID);
-    ResponseModel getStudentExamList(StudentExamListRequest studentExamListRequest);
+    ResponseModel getTeacherExamInfo(TeacherExamInfoRequest teacherExamInfoRequest);
+    ResponseModel getStudentExamList(TeacherExamInfoRequest teacherExamInfoRequest);
     ResponseModel getStudentExamNeedMark(StudentExamNeedMarkRequest studentExamNeedMarkRequest);
     ResponseModel getNextStudentExamNeedMark(NextStudentExamNeedMarkRequest nextStudentExamNeedMarkRequest);
     ResponseModel submitMarkedExam(MarkedExamRequest markedExamRequest);

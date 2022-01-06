@@ -29,17 +29,20 @@ public class TeacherController {
     private TeacherService teacherService;
 
     @RequestMapping(value = "/teacher/student/add",method = RequestMethod.POST)
-    public ResponseEntity<ResponseModel> addStudent(@RequestBody Student student) {
-        return ResponseEntity.ok(teacherService.addStudent(student));
+    public ResponseEntity<ResponseModel> addStudent(@RequestBody AddStudentRequest request) {
+        log.info(String.format(" 添加学生： -%s-", request.getsID()));
+        return ResponseEntity.ok(teacherService.addStudent(request));
     }
 
     @RequestMapping(value = "/teacher/student/delete",method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> deleteStudent(@RequestBody Student student) {
+        log.info(String.format(" 删除学生： -%s-", student.getsID()));
         return ResponseEntity.ok(teacherService.deleteStudent(student.getsID()));
     }
 
     @RequestMapping(value = "/teacher/student/update",method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> updateStudent(@RequestBody Student student) {
+        log.info(String.format(" 更新学生： -%s-", student.getsID()));
         return ResponseEntity.ok(teacherService.updateStudent(student));
     }
 
@@ -91,8 +94,14 @@ public class TeacherController {
         return ResponseEntity.ok().body(teacherService.getTeacherExamList(teacher.gettID()));
     }
 
+    @RequestMapping(value = "/teacher/exam/info", method = RequestMethod.POST)
+    public ResponseEntity<ResponseModel> getTeacherExamInfo(@RequestBody TeacherExamInfoRequest request){
+        log.info(String.format("教师 -%s- 查询考试 -%s- 详情", request.gettID(), request.getExamID()));
+        return ResponseEntity.ok().body(teacherService.getTeacherExamInfo(request));
+    }
+
     @RequestMapping(value = "/teacher/exam/student/list", method = RequestMethod.POST)
-    public ResponseEntity<ResponseModel> getStudentExamList(@RequestBody StudentExamListRequest request){
+    public ResponseEntity<ResponseModel> getStudentExamList(@RequestBody TeacherExamInfoRequest request){
         log.info(String.format("教师 -%s- 查询考试 -%s- 的待评卷列表", request.gettID(), request.getExamID()));
         return ResponseEntity.ok().body(teacherService.getStudentExamList(request));
     }

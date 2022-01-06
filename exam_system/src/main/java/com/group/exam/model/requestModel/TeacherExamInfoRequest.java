@@ -1,6 +1,6 @@
 package com.group.exam.model.requestModel;
 
-public class StudentExamListRequest {
+public class TeacherExamInfoRequest {
     private String tID;
     private String examID;
 
