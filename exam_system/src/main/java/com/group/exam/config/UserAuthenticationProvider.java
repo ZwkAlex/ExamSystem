@@ -3,6 +3,8 @@ package com.group.exam.config;
 import com.group.exam.model.entity.SecurityUser;
 import com.group.exam.service.impl.UserService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,12 +23,13 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
     @Resource
     private UserService userService;
 
-
+    private static final Logger log = LoggerFactory.getLogger(UserAuthenticationProvider.class);
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         // 获取前端表单中输入后返回的用户名、密码
         String id = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
+        log.info(String.format(" -%s- 请求登录。", id));
         @SuppressWarnings("unchecked")
         Collection<GrantedAuthority> auth = (Collection<GrantedAuthority>) authentication.getAuthorities();
         Iterator<GrantedAuthority> i = auth.iterator();

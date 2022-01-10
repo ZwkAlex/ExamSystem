@@ -23,6 +23,6 @@ public class CusAuthenticationManager implements AuthenticationManager {
         if (Objects.nonNull(result)) {
             return result;
         }
-        throw new ProviderNotFoundException("Authentication failed!");
+        throw new ProviderNotFoundException("授权失败！");
     }
 }

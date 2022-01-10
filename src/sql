@@ -13,8 +13,8 @@ DROP TABLE IF EXISTS student;
 CREATE TABLE student(
 sid VARCHAR(20) NOT NULL PRIMARY KEY,
 sname VARCHAR(20) NOT NULL,
-college VARCHAR(20),
-smajorid VARCHAR(20)
+college VARCHAR(64),
+smajorid VARCHAR(64)
 );
 INSERT INTO student VALUES('1', 'sss', 'aaaa', 'bbb');
 SELECT * FROM student;
@@ -22,9 +22,10 @@ SELECT * FROM student;
 DROP TABLE IF EXISTS teacher;
 CREATE TABLE teacher(
 tid VARCHAR(20) NOT NULL PRIMARY KEY,
-tname VARCHAR(20) NOT NULL
+tname VARCHAR(20) NOT NULL,
+college VARCHAR(64)
 );
-INSERT INTO teacher VALUES('2', 'ffff');
+INSERT INTO teacher VALUES('2', 'ffff', 'ccccc');
 SELECT * FROM teacher;
 
 DROP TABLE IF EXISTS s_e;
@@ -41,8 +42,8 @@ DROP TABLE IF EXISTS course;
 CREATE TABLE course(
 courseid VARCHAR(20)  NOT NULL PRIMARY KEY,
 tid VARCHAR(20),
-coursename VARCHAR(20) DEFAULT NULL,
-description VARCHAR(255) DEFAULT NULL
+coursename VARCHAR(64) DEFAULT NULL,
+description TEXT DEFAULT NULL
 );
 INSERT INTO course VALUES('1','2', 'ffff','description');
 SELECT * FROM course;
@@ -63,7 +64,7 @@ CREATE TABLE question(
 questionid VARCHAR(20)  NOT NULL PRIMARY KEY,
 examid  VARCHAR(20),
 type INT NOT NULL,
-title VARCHAR(255) NOT NULL,
+title TEXT NOT NULL,
 options TEXT DEFAULT NULL,
 score DOUBLE
 );
@@ -74,7 +75,7 @@ DROP TABLE IF EXISTS answer;
 CREATE TABLE answer(
 examid  VARCHAR(20) NOT NULL,
 questionid VARCHAR(20)  NOT NULL ,
-answer VARCHAR(20)
+answer TEXT
 );
 INSERT INTO answer VALUES('1','1', 'A_#_B');
 SELECT * FROM answer;

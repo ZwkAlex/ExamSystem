@@ -6,6 +6,7 @@ import com.group.exam.model.requestModel.*;
 import com.group.exam.model.responseModel.ResponseModel;
 
 public interface TeacherServiceInterface {
+    ResponseModel getTeacherInfo(String tID);
     ResponseModel addStudent(AddStudentRequest request);
     ResponseModel deleteStudent(String sid);
     ResponseModel updateStudent(Student student);

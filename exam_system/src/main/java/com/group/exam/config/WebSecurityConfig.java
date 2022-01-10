@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import javax.annotation.Resource;
 
 @Configuration
@@ -32,19 +31,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //http相关的配置，包括登入登出、异常处理、会话管理等
 
         http.authorizeRequests()
-                .antMatchers("/home").permitAll()
+                .antMatchers("/login","/home","/user/login").permitAll()
                 .antMatchers("/teacher/**").hasRole("TEACHER")
                 .antMatchers("/student/**").hasRole("STUDENT")
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(userAuthenticationEntryPoint)
-//                .and().exceptionHandling().accessDeniedPage("/error_page.html")
                 .and().exceptionHandling().accessDeniedHandler(cusAccessDeniedHandler)
                 .and().formLogin().loginProcessingUrl("/user/login")
                 .and().rememberMe();
         http.sessionManagement()
                 .invalidSessionUrl("/login")
                 .maximumSessions(1).maxSessionsPreventsLogin(true);
-        http.csrf().disable();
+        http.cors().and().csrf().disable();
         http.addFilterAt(authenticationProcessingFilter, UsernamePasswordAuthenticationFilter.class);
     }
     @Override

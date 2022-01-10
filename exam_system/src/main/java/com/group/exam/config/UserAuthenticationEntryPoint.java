@@ -1,5 +1,6 @@
 package com.group.exam.config;
 
+import com.group.exam.util.ResponseUtil;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -20,7 +21,7 @@ public final class UserAuthenticationEntryPoint implements AuthenticationEntryPo
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
-        response.sendRedirect("/login");
+        ResponseUtil.denied(response,ResponseUtil.error("未登录！"));
     }
 
 }

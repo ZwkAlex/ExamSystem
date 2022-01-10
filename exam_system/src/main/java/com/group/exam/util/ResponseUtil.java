@@ -71,7 +71,6 @@ public class ResponseUtil {
             e.printStackTrace();
         } finally {
             if (out != null) {
-                out.flush();
                 out.close();
             }
         }

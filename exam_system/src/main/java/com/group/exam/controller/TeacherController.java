@@ -28,6 +28,12 @@ public class TeacherController {
     @Resource
     private TeacherService teacherService;
 
+    @RequestMapping(value = "/teacher/info", method = RequestMethod.POST)
+    public ResponseEntity<ResponseModel> getTeacherInfo(@RequestBody Teacher teacher){
+        log.info(String.format(" 查看教师 -%s- 的个人信息", teacher.gettID()));
+        return ResponseEntity.ok().body(teacherService.getTeacherInfo(teacher.gettID()));
+    }
+
     @RequestMapping(value = "/teacher/student/add",method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> addStudent(@RequestBody AddStudentRequest request) {
         log.info(String.format(" 添加学生： -%s-", request.getsID()));

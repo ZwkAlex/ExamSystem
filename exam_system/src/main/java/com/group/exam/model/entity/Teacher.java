@@ -3,6 +3,7 @@ package com.group.exam.model.entity;
 public class Teacher{
     private String tName;
     private String tID;
+    private String college;
 
     @Override
     public String toString() {
@@ -26,5 +27,13 @@ public class Teacher{
 
     public void settID(String tID) {
         this.tID = tID;
+    }
+
+    public String getCollege() {
+        return college;
+    }
+
+    public void setCollege(String college) {
+        this.college = college;
     }
 }

@@ -41,6 +41,12 @@ public class TeacherService implements  TeacherServiceInterface {
 
 
     @Override
+    public ResponseModel getTeacherInfo(String tID) {
+        Teacher teacher = teacherMapper.findByID(tID);
+        return teacher!= null?ResponseUtil.success(teacher):ResponseUtil.error();
+    }
+
+    @Override
     public ResponseModel addStudent(AddStudentRequest request) {
         return studentMapper.insertStudent(request) == 1&&
                 userMapper.insertStudentUser(request.getsID(),request.getPassword()) == 1?

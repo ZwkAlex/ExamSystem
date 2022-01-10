@@ -4,7 +4,6 @@ import com.group.exam.model.cusEnum.ExamStatus;
 import com.group.exam.model.cusEnum.QuestionType;
 import com.group.exam.model.entity.Question;
 import com.group.exam.model.responseModel.AutoMarkModel;
-import com.sun.deploy.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +13,7 @@ public class ExamUtil {
     private static final String regex = "_#_ ";
 
     public static String StringList2String(List<String> list) {
-        return StringUtils.join(list,regex);
+        return String.join(regex,list);
     }
 
     public static List<String> String2StringList(String s) {
