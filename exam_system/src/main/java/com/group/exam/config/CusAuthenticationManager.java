@@ -6,16 +6,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Objects;
 
 @Component
 public class CusAuthenticationManager implements AuthenticationManager {
 
-    private final UserAuthenticationProvider userAuthenticationProvider;
+    @Resource
+    private UserAuthenticationProvider userAuthenticationProvider;
 
-    public CusAuthenticationManager(UserAuthenticationProvider userAuthenticationProvider) {
-        this.userAuthenticationProvider = userAuthenticationProvider;
-    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

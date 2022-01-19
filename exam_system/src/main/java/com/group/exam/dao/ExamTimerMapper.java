@@ -12,8 +12,11 @@ public interface ExamTimerMapper {
     @Delete("DELETE FROM timer WHERE UNIX_TIMESTAMP(NOW()) > endtime")
     int deleteExpired();
 
-    @Select("SELECT count(*)=1 FROM timer WHERE sid = #{id}")
-    boolean checkStudentInExam(@Param("id") String ID);
+    @Select("SELECT count(*)=1 FROM timer WHERE sid = #{id} and examid <> #{examID}")
+    boolean checkStudentInOtherExam(@Param("id") String ID,@Param("examID") String examID);
+
+    @Select("SELECT count(*)=1 FROM timer WHERE sid = #{id} and examid = #{examID}")
+    boolean checkStudentInExam(@Param("id") String ID,@Param("examID") String examID);
 
     @Select("SELECT * FROM timer WHERE sid = #{id}")
     boolean findById(@Param("id") String ID);
@@ -21,7 +24,7 @@ public interface ExamTimerMapper {
     @Insert("INSERT INTO timer VALUES(#{sid},#{examID},DATE_ADD(NOW(),INTERVAL #{time} SECOND))")
     int startExam(@Param("sid") String sID, @Param("examID") String testID, @Param("time") String time);
 
-    @Delete("Delete FROM timer WHERE sid = #{sid} AND examID = #{examID}")
+    @Delete("Delete FROM timer WHERE sid = #{sid} AND examid = #{examID}")
     int stopExam(@Param("sid") String sID, @Param("examID") String testID);
 
 }

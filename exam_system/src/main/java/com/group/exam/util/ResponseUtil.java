@@ -51,6 +51,18 @@ public class ResponseUtil {
         return error(null);
     }
 
+    /**token验证失败**/
+    public static ResponseModel tokenError(String msg){
+        ResponseModel result = new ResponseModel();
+        result.setStatus(ResponseCode.TOKEN_ERROR.getCode());
+        result.setMessage(msg == null?ResponseCode.TOKEN_ERROR.getMsg():msg);
+        return result;
+    }
+
+    public static ResponseModel tokenError(){
+        return error(null);
+    }
+
     public static void ok(HttpServletResponse response, ResponseModel result){
         out(response, result, 200);
     }

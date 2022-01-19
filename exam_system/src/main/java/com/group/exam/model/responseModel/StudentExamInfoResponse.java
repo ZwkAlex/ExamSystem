@@ -1,10 +1,20 @@
 package com.group.exam.model.responseModel;
 
+import com.group.exam.model.entity.Course;
+import com.group.exam.model.entity.Exam;
+import com.group.exam.model.entity.Teacher;
+
 public class StudentExamInfoResponse extends StudentExamResponse {
     private String tName;
-    private String duration;
     private String totalScore;
     private String numberOfQuestions;
+    private boolean isValid;
+    private String status;
+
+    public StudentExamInfoResponse(Course course, Exam exam, Teacher teacher) {
+        super(course,exam);
+        tName = teacher.gettName();
+    }
 
     public String gettName() {
         return tName;
@@ -12,14 +22,6 @@ public class StudentExamInfoResponse extends StudentExamResponse {
 
     public void settName(String tName) {
         this.tName = tName;
-    }
-
-    public String getDuration() {
-        return duration;
-    }
-
-    public void setDuration(String duration) {
-        this.duration = duration;
     }
 
     public String getTotalScore() {
@@ -36,5 +38,21 @@ public class StudentExamInfoResponse extends StudentExamResponse {
 
     public void setNumberOfQuestions(String numberOfQuestions) {
         this.numberOfQuestions = numberOfQuestions;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public boolean isValid() {
+        return isValid;
+    }
+
+    public void setIsValid(boolean isValid) {
+        this.isValid = isValid;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

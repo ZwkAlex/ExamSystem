@@ -1,8 +1,10 @@
 package com.group.exam.config;
 
 import com.group.exam.model.entity.SecurityUser;
+import com.group.exam.model.entity.User;
 import com.group.exam.service.impl.UserService;
 
+import com.group.exam.util.JwtTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -20,6 +22,8 @@ import java.util.Iterator;
 @Component
 public class UserAuthenticationProvider implements AuthenticationProvider {
 
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
     @Resource
     private UserService userService;
 
@@ -54,13 +58,13 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
 
         // 前后端分离情况下 处理逻辑...
         // 更新登录令牌 - 之后访问系统其它接口直接通过token认证用户权限...
-//        String token = PasswordUtils.encodePassword(System.currentTimeMillis() + userInfo.getCurrentUserInfo().getSalt(), userInfo.getCurrentUserInfo().getSalt());
-//        User user = userMapper.selectById(userInfo.getCurrentUserInfo().getId());
-//        user.setToken(token);
-//        userMapper.updateById(user);
-//        userInfo.getCurrentUserInfo().setToken(token);
+        String token = jwtTokenUtil.generateToken(userInfo);
+        User user = userService.getUserByID(userInfo.getCurrentUserInfo().getId());
+        user.setToken(token);
+        userService.updateToken(user);
+        userInfo.getCurrentUserInfo().setToken(token);
 
-        return new UsernamePasswordAuthenticationToken(userInfo.getUsername(), userInfo.getPassword(), userInfo.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userInfo, authentication.getCredentials(), userInfo.getAuthorities());
     }
 
     @Override

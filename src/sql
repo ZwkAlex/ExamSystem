@@ -2,10 +2,11 @@ DROP TABLE  IF EXISTS User;
 CREATE TABLE User(
 id VARCHAR(20)  NOT NULL PRIMARY KEY,
 password VARCHAR(20) NOT NULL ,
-role VARCHAR(20)  NOT NULL
+role VARCHAR(20)  NOT NULL,
+token LONGTEXT
 );
-INSERT INTO User VALUES('1','1',"ROLE_STUDENT");
-INSERT INTO User VALUES('2','1',"ROLE_TEACHER");
+INSERT INTO User VALUES('1','1',"ROLE_STUDENT",null);
+INSERT INTO User VALUES('2','1',"ROLE_TEACHER",null);
 SELECT * FROM User;
 
 
@@ -16,7 +17,7 @@ sname VARCHAR(20) NOT NULL,
 college VARCHAR(64),
 smajorid VARCHAR(64)
 );
-INSERT INTO student VALUES('1', 'sss', 'aaaa', 'bbb');
+INSERT INTO student VALUES('1', 'sname', 'college', '1');
 SELECT * FROM student;
 
 DROP TABLE IF EXISTS teacher;
@@ -25,8 +26,16 @@ tid VARCHAR(20) NOT NULL PRIMARY KEY,
 tname VARCHAR(20) NOT NULL,
 college VARCHAR(64)
 );
-INSERT INTO teacher VALUES('2', 'ffff', 'ccccc');
+INSERT INTO teacher VALUES('2', 'tname', 'college');
 SELECT * FROM teacher;
+
+DROP TABLE IF EXISTS major;
+CREATE TABLE major(
+smajorid VARCHAR(20) NOT NULL,
+mname VARCHAR(255) NOT NULL
+);
+INSERT INTO major VALUES('1', 'mname');
+SELECT * FROM major;
 
 DROP TABLE IF EXISTS s_e;
 CREATE TABLE s_e(
@@ -35,7 +44,9 @@ examid VARCHAR(20) NOT NULL,
 status INT DEFAULT 0,
 score DOUBLE DEFAULT -1
 );
-INSERT INTO s_e(sid,examid) VALUES('1', '1');
+INSERT INTO s_e(sid,examid,status) VALUES('1', '1', 0);
+INSERT INTO s_e(sid,examid,status) VALUES('1', '2', 1);
+INSERT INTO s_e(sid,examid,status) VALUES('1', '3', 2);
 SELECT * FROM s_e;
 
 DROP TABLE IF EXISTS course;
@@ -45,7 +56,7 @@ tid VARCHAR(20),
 coursename VARCHAR(64) DEFAULT NULL,
 description TEXT DEFAULT NULL
 );
-INSERT INTO course VALUES('1','2', 'ffff','description');
+INSERT INTO course VALUES('1','2', 'cname','description');
 SELECT * FROM course;
 
 DROP TABLE IF EXISTS exam;
@@ -56,7 +67,9 @@ startdate TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
 enddate TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
 duration INT
 );
-INSERT INTO exam VALUES('1','1', now(), date_add(now(), interval 1 day),60);
+INSERT INTO exam VALUES('1','1', now(), date_add(now(), interval 30 day),60);
+INSERT INTO exam VALUES('2','1', now(), date_add(now(), interval 50 day),120);
+INSERT INTO exam VALUES('3','1', now(), date_add(now(), interval 60 day),150);
 SELECT * FROM exam;
 
 DROP TABLE IF EXISTS question;
@@ -68,7 +81,11 @@ title TEXT NOT NULL,
 options TEXT DEFAULT NULL,
 score DOUBLE
 );
-INSERT INTO question VALUES('1','1',2 , 'title','option1_#_option2',1);
+INSERT INTO question VALUES('1','1',1 , 'title','option1_#_option2',1);
+INSERT INTO question VALUES('2','1',2 , 'title','option1_#_option2',1);
+INSERT INTO question VALUES('3','1',3 , 'title','option1_#_option2',1);
+INSERT INTO question VALUES('4','1',4 , 'title','option1_#_option2',1);
+INSERT INTO question VALUES('5','1',5, 'title','option1_#_option2',1);
 SELECT * FROM question;
 
 DROP TABLE IF EXISTS answer;
@@ -77,7 +94,11 @@ examid  VARCHAR(20) NOT NULL,
 questionid VARCHAR(20)  NOT NULL ,
 answer TEXT
 );
-INSERT INTO answer VALUES('1','1', 'A_#_B');
+INSERT INTO answer VALUES('1','1', 'A');
+INSERT INTO answer VALUES('1','2', 'A_#_B');
+INSERT INTO answer VALUES('1','3', 'true');
+INSERT INTO answer VALUES('1','4', 'tiankong');
+INSERT INTO answer VALUES('1','5', 'zhuguan');
 SELECT * FROM answer;
 
 

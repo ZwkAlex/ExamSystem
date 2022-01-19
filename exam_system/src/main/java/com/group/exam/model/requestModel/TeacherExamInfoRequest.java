@@ -1,16 +1,8 @@
 package com.group.exam.model.requestModel;
 
 public class TeacherExamInfoRequest {
-    private String tID;
     private String examID;
 
-    public String gettID() {
-        return tID;
-    }
-
-    public void settID(String tID) {
-        this.tID = tID;
-    }
 
     public String getExamID() {
         return examID;

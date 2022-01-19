@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ResponseCode {
+    TOKEN_ERROR(-2,"Token Invalid"),
     UNKNOWN_ERROR(-1,"服务端未知错误,请稍后重试。"),
     SUCCESS(1,"成功"),
     DATA_IS_EMPTY(0,"空信息"),

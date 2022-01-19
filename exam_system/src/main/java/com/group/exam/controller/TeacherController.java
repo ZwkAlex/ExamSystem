@@ -7,6 +7,8 @@ import com.group.exam.model.entity.Teacher;
 import com.group.exam.model.requestModel.*;
 import com.group.exam.model.responseModel.ResponseModel;
 import com.group.exam.service.impl.TeacherService;
+import com.group.exam.util.AuthUtil;
+import com.group.exam.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +29,18 @@ public class TeacherController {
 
     @Resource
     private TeacherService teacherService;
+    @Resource
+    private AuthUtil authUtil;
 
     @RequestMapping(value = "/teacher/info", method = RequestMethod.POST)
-    public ResponseEntity<ResponseModel> getTeacherInfo(@RequestBody Teacher teacher){
-        log.info(String.format(" 查看教师 -%s- 的个人信息", teacher.gettID()));
-        return ResponseEntity.ok().body(teacherService.getTeacherInfo(teacher.gettID()));
+    public ResponseEntity<ResponseModel> getTeacherInfo(){
+        try {
+            String id = authUtil.getUserID();
+            log.info(String.format(" 查看教师 -%s- 的个人信息", id));
+            return ResponseEntity.ok().body(teacherService.getTeacherInfo(id));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
+        }
     }
 
     @RequestMapping(value = "/teacher/student/add",method = RequestMethod.POST)
@@ -90,43 +99,78 @@ public class TeacherController {
 
     @RequestMapping(value = "/teacher/exam/assign", method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> assignExam(@RequestBody AssignMajorExamRequest request) {
-        log.info(String.format("教师 -%s- 指定 专业-%s- 进行考试 -%s- ", request.gettID(), request.getExamID(), request.getExamID()));
-        return ResponseEntity.ok().body(teacherService.assignExam(request));
+        try {
+            String id = authUtil.getUserID();
+            log.info(String.format("教师 -%s- 指定 专业-%s- 进行考试 -%s- ", id, request.getExamID(), request.getExamID()));
+            return ResponseEntity.ok().body(teacherService.assignExam(request));
+        }catch (Exception e) {
+            return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
+        }
     }
 
     @RequestMapping(value = "/teacher/exam/list", method = RequestMethod.POST)
-    public ResponseEntity<ResponseModel> getTeacherExamList(@RequestBody Teacher teacher){
-        log.info(String.format("教师 -%s- 查询考试列表", teacher.gettID()));
-        return ResponseEntity.ok().body(teacherService.getTeacherExamList(teacher.gettID()));
+    public ResponseEntity<ResponseModel> getTeacherExamList(){
+        try {
+            String id = authUtil.getUserID();
+            log.info(String.format("教师 -%s- 查询考试列表", id));
+            return ResponseEntity.ok().body(teacherService.getTeacherExamList(id));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
+        }
     }
 
     @RequestMapping(value = "/teacher/exam/info", method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> getTeacherExamInfo(@RequestBody TeacherExamInfoRequest request){
-        log.info(String.format("教师 -%s- 查询考试 -%s- 详情", request.gettID(), request.getExamID()));
-        return ResponseEntity.ok().body(teacherService.getTeacherExamInfo(request));
+        try {
+            String id = authUtil.getUserID();
+            log.info(String.format("教师 -%s- 查询考试 -%s- 详情",id, request.getExamID()));
+            return ResponseEntity.ok().body(teacherService.getTeacherExamInfo(request));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
+        }
     }
 
     @RequestMapping(value = "/teacher/exam/student/list", method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> getStudentExamList(@RequestBody TeacherExamInfoRequest request){
-        log.info(String.format("教师 -%s- 查询考试 -%s- 的待评卷列表", request.gettID(), request.getExamID()));
-        return ResponseEntity.ok().body(teacherService.getStudentExamList(request));
+        try {
+            String id = authUtil.getUserID();
+            log.info(String.format("教师 -%s- 查询考试 -%s- 的待评卷列表", id, request.getExamID()));
+            return ResponseEntity.ok().body(teacherService.getStudentExamList(request));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
+        }
     }
 
     @RequestMapping(value = "/teacher/exam/student/mark/one", method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> getStudentExamNeedMark(@RequestBody StudentExamNeedMarkRequest request){
-        log.info(String.format("教师 -%s- 查询考试 -%s- 学生 -%s- 的试卷", request.gettID(), request.getExamID(), request.getsID()));
-        return ResponseEntity.ok().body(teacherService.getStudentExamNeedMark(request));
+        try {
+            String id = authUtil.getUserID();
+            log.info(String.format("教师 -%s- 查询考试 -%s- 学生 -%s- 的试卷",id, request.getExamID(), request.getsID()));
+            return ResponseEntity.ok().body(teacherService.getStudentExamNeedMark(request));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
+        }
     }
 
     @RequestMapping(value = "/teacher/exam/student/mark/submit", method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> submitMarkedExam(@RequestBody MarkedExamRequest request){
-        log.info(String.format("教师 -%s-   批改学生 -%s- 科目 -%s- 的试卷", request.gettID(), request.getsID(), request.getExamID()));
-        return ResponseEntity.ok().body(teacherService.submitMarkedExam(request));
+        try {
+            String id = authUtil.getUserID();
+            log.info(String.format("教师 -%s-   批改学生 -%s- 科目 -%s- 的试卷", id, request.getsID(), request.getExamID()));
+            return ResponseEntity.ok().body(teacherService.submitMarkedExam(request));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
+        }
     }
 
     @RequestMapping(value = "/teacher/exam/student/mark/next", method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> getNextStudentExamNeedMark(@RequestBody NextStudentExamNeedMarkRequest request){
-        log.info(String.format("教师 -%s- 查询考试 -%s- 下一个学生的试卷", request.gettID(), request.getExamID()));
-        return ResponseEntity.ok().body(teacherService.getNextStudentExamNeedMark(request));
+        try {
+            String id = authUtil.getUserID();
+            log.info(String.format("教师 -%s- 查询考试 -%s- 下一个学生的试卷", id, request.getExamID()));
+            return ResponseEntity.ok().body(teacherService.getNextStudentExamNeedMark(request));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
+        }
     }
 }

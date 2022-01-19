@@ -43,7 +43,7 @@ public class TeacherService implements  TeacherServiceInterface {
     @Override
     public ResponseModel getTeacherInfo(String tID) {
         Teacher teacher = teacherMapper.findByID(tID);
-        return teacher!= null?ResponseUtil.success(teacher):ResponseUtil.error();
+        return teacher!= null?ResponseUtil.success(teacher):ResponseUtil.error("未找到当前学生信息");
     }
 
     @Override

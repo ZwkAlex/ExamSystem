@@ -11,7 +11,10 @@ public interface UserMapper {
     boolean checkUser(@Param("id") String ID, @Param("password") String password);
 
     @Update("UPDATE user SET password = #{password}  WHERE id = #{id}")
-    boolean changePassword(@Param("id") String ID, @Param("password") String password);
+    int changePassword(@Param("id") String ID, @Param("password") String password);
+
+    @Update("UPDATE user SET token = #{token}  WHERE id = #{id}")
+    int updateToken(@Param("id") String ID, @Param("token") String token);
 
     @Insert("INSERT INTO user VALUES(#{id}, #{password}, 'ROLE_STUDENT'))")
     int insertStudentUser(@Param("id") String ID, @Param("password") String password);

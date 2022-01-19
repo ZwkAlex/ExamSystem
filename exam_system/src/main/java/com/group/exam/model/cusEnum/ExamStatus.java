@@ -6,7 +6,7 @@ import java.util.Map;
 
 public enum  ExamStatus {
     UNFINISHED(0,"未完成"),
-    FINISHED(1,"已完成，未评分。"),
+    FINISHED(1,"已完成，未评分"),
     MARKED(2,"已评分"),
     CANCELLED(3,"已取消"),
     MARKING(4,"正在评分");

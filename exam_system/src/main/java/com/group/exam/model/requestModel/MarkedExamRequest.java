@@ -3,18 +3,9 @@ package com.group.exam.model.requestModel;
 import java.util.List;
 
 public class MarkedExamRequest {
-    private String tID;
     private String sID;
     private String examID;
     private List<MarkedAnswerModel> markedAnswers;
-
-    public String gettID() {
-        return tID;
-    }
-
-    public void settID(String tID) {
-        this.tID = tID;
-    }
 
     public String getsID() {
         return sID;

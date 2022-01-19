@@ -6,17 +6,8 @@ import com.group.exam.model.entity.StudentExam;
 import java.util.List;
 
 public class StopExamRequest{
-    private String sID;
     private String examID;
     private List<Answer> answers;
-
-    public String getsID() {
-        return sID;
-    }
-
-    public void setsID(String sID) {
-        this.sID = sID;
-    }
 
     public String getExamID() {
         return examID;

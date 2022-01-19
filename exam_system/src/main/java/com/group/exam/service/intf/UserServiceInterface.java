@@ -10,4 +10,7 @@ import javax.servlet.http.HttpSession;
 public interface UserServiceInterface extends UserDetailsService {
     boolean checkRole(User user, String role);
     ResponseModel changePassword(PasswordChangeRequest passwordChangeRequest);
+    User getUserByID(String id);
+    boolean updateToken(User user);
+    ResponseModel getUserInfo(String id);
 }

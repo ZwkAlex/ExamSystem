@@ -1,6 +1,6 @@
 package com.group.exam.model.requestModel;
 
-public class NextStudentExamNeedMarkRequest {
+public class TimeCheckRequest {
     private String examID;
 
     public String getExamID() {

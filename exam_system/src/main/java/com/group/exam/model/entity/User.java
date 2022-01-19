@@ -4,6 +4,7 @@ public class User {
     private String id;
     private String password;
     private String role;
+    private String token;
 
     @Override
     public String toString() {
@@ -36,5 +37,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
