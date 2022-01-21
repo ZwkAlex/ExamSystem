@@ -5,15 +5,19 @@ import com.group.exam.model.cusEnum.QuestionType;
 import com.group.exam.model.entity.Question;
 import com.group.exam.model.responseModel.AutoMarkModel;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
 public class ExamUtil {
 
-    private static final String regex = "_#_ ";
+    private static final String regex = "_#_";
 
     public static String StringList2String(List<String> list) {
-        return String.join(regex,list);
+        return list != null? String.join(regex,list): "";
     }
 
     public static List<String> String2StringList(String s) {
@@ -28,11 +32,27 @@ public class ExamUtil {
             return String.format("%d小时", hours);
         }else if(hours == 0 && seconds == 0){
             return String.format("%d分钟", minutes);
-        }else if(hours == 0 && minutes == 0){
+        }else if(hours == 0 && minutes == 0) {
             return String.format("%d秒", seconds);
+        }else if(hours == 0){
+            return String.format("%d分钟%d秒", minutes,seconds);
+        }else if(seconds == 0){
+            return String.format("%d小时%d分钟", hours,minutes);
         }else {
             return String.format("%d小时%d分钟%d秒", hours, minutes, seconds);
         }
+    }
+
+    public static int Sec2Hours(int sec){
+        return sec / 3600;
+    }
+
+    public static int Sec2Minutes(int sec){
+        return (sec % 3600) / 60;
+    }
+
+    public static int Sec2Sec(int sec){
+        return sec % 60;
     }
 
     public static String Score2String(double score,int status){
@@ -116,4 +136,27 @@ public class ExamUtil {
         }
         return autoMark;
     }
+
+    public static Timestamp String2Timestamp(String dateTime){
+        try {
+            return Timestamp.valueOf(dateTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Timestamp(System.currentTimeMillis());
+        }
+    }
+
+    public static int String2Sec(String time){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalTime localTime = LocalTime.parse(time,formatter);
+        return localTime.getHour() * 3600 + localTime.getMinute() * 60 +  localTime.getSecond();
+    }
+
+    public static String StartToStopStringFormat(Timestamp start, Timestamp stop){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy年MM月dd日");
+        String startDate = formatter.format(start.toLocalDateTime().toLocalDate());
+        String stopDate = formatter.format(stop.toLocalDateTime().toLocalDate());
+        return String.format("%s至%s", startDate, stopDate);
+    }
+
 }

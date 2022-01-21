@@ -22,6 +22,6 @@ public interface AnswerMapper {
     @Select("SELECT * FROM answer WHERE examid = {#examID}")
     List<AnswerDao> findAllByExamID(@Param("examID")String examID);
 
-    @Select("UPDATE  answer SET answer = #{answer}, examid = {#examID} WHERE questionid = #{questionid}")
+    @Select("UPDATE  answer SET answer = #{answer}, examid = {#examID} WHERE questionid = #{questionID}")
     int updateAnswer(AnswerDao answer);
 }

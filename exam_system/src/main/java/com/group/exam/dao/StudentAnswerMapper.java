@@ -10,12 +10,15 @@ import org.apache.ibatis.annotations.Update;
 import java.util.List;
 
 public interface StudentAnswerMapper {
-    @Insert("INSERT INTO studentanswer(sid,examid,questionid,answer) VALUES(#{sid},#{examid},#{questionid},#{answer})")
+    @Insert("INSERT INTO studentanswer(sid,examid,questionid,answer) VALUES(#{sID},#{examID},#{questionID},#{answer}) " +
+            "ON DUPLICATE KEY UPDATE answer = #{answer}")
     int saveStudentAnswer(StudentAnswerDao studentAnswer);
 
-    @Select("SELECT * FROM studentanswer WHERE examID = #{examID} AND sID = #{sID}")
+    @Select("SELECT * FROM studentanswer WHERE examid = #{examID} AND sid = #{sID}")
     List<StudentAnswerDao> findAllByExamIDAndSID(@Param("sID")String sID, @Param("examID")String examID);
 
-    @Update("UPDATE studentanswer SET score = #{score}, ismarked = TRUE WHERE sID = #{sid} AND examID = #{examid}")
-    int setScore(@Param("sID")String sID, @Param("examID")String examID, @Param("score") double score);
+    @Update("UPDATE studentanswer SET score = #{score}, ismarked = TRUE WHERE sID = #{sID} AND examID = #{examID} " +
+            "AND questionid = #{questionID}")
+    int setScore(@Param("sID")String sID, @Param("examID")String examID, @Param("questionID") String questionID,
+                 @Param("score") double score);
 }

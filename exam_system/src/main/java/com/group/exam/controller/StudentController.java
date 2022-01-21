@@ -50,7 +50,6 @@ public class StudentController {
         }catch (Exception e){
             return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
         }
-
     }
 
     @RequestMapping(value = "/student/exam/list", method= RequestMethod.POST)
@@ -102,8 +101,8 @@ public class StudentController {
         }
     }
 
-    @RequestMapping(value = "/student/exam/end", method = RequestMethod.POST)
-    public ResponseEntity<ResponseModel> endExam(@RequestBody StopExamRequest stopExamRequest){
+    @RequestMapping(value = "/student/exam/stop", method = RequestMethod.POST)
+    public ResponseEntity<ResponseModel> stopExam(@RequestBody StopExamRequest stopExamRequest){
         try {
             String id = authUtil.getUserID();
             log.info(String.format(" -%s- 结束考试 -%s- ", id, stopExamRequest.getExamID()));

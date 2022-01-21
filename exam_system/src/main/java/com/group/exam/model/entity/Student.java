@@ -16,6 +16,9 @@ public class Student{
                 '}';
     }
 
+    public Student() {
+    }
+
     public String getsName() {
         return sName;
     }

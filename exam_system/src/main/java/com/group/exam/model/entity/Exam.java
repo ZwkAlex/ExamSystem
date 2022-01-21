@@ -1,5 +1,8 @@
 package com.group.exam.model.entity;
 
+import com.group.exam.model.requestModel.AlterExamRequest;
+import com.group.exam.util.ExamUtil;
+
 import java.sql.Timestamp;
 
 public class Exam {
@@ -9,6 +12,16 @@ public class Exam {
     private Timestamp endDate;
     private int duration;
     private double totalScore;
+
+    public Exam(){}
+
+    public Exam(AlterExamRequest request){
+        examID = request.getExamID();
+        courseID = request.getCourseID();
+        startDate = ExamUtil.String2Timestamp(request.getStartDate());
+        endDate = ExamUtil.String2Timestamp(request.getEndDate());
+        duration = ExamUtil.String2Sec(request.getDuration());
+    }
 
     public String getExamID() {
         return examID;

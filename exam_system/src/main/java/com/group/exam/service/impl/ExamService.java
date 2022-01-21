@@ -196,10 +196,21 @@ public class ExamService implements ExamServiceInterface {
 
     @Override
     public ResponseModel checkTime(String id, TimeCheckRequest request) {
+        String examID = request.getExamID();
         TimeCheckResponse response = new TimeCheckResponse();
-        response.setUnexpired(examTimerMapper.checkStudentInExam(id,request.getExamID()));
+        ExamTimer examTimer = examTimerMapper.findById(id,examID);
+        if(examTimer != null) {
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            Timestamp endTime = examTimer.getEndTime();
+            if(now.compareTo(endTime) < 0) {
+                response.setExpired(false);
+                response.setDuration((int)(endTime.getTime() - now.getTime())/1000);
+            }else{
+                response.setExpired(true);
+            }
+        }else{
+            response.setExpired(true);
+        }
         return ResponseUtil.success(response);
     }
-
-
 }

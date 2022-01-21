@@ -1,13 +1,23 @@
 package com.group.exam.model.responseModel;
 
 public class TimeCheckResponse {
-    private boolean unexpired;
+    private boolean expired;
+    private int duration;
 
-    public boolean isUnexpired() {
-        return unexpired;
+    public boolean isExpired() {
+        return expired;
     }
 
-    public void setUnexpired(boolean unexpired) {
-        this.unexpired = unexpired;
+    public void setExpired(boolean expired) {
+        this.expired = expired;
+    }
+
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

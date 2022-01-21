@@ -15,16 +15,16 @@ public interface QuestionMapper {
     @Select("SELECT COUNT(*)=1 FROM question WHERE questionid = #{id}")
     boolean checkQuestion(@Param("id") String ID);
 
-    @Select("SELECT COUNT(*) FROM question WHERE examID = #{id}")
+    @Select("SELECT COUNT(*) FROM question WHERE examid = #{id}")
     int countByExamID(@Param("id") String ID);
 
     @Insert("INSERT INTO question VALUES(#{questionID},#{examID},#{type},#{title},#{options},#{score})")
     int addQuestion(QuestionDao question);
 
-    @Delete("DELETE FROM question WHERE questionid={#questionid}")
-    int deleteQuestion(String questionID);
+    @Delete("DELETE FROM question WHERE questionid=#{questionID}")
+    int deleteQuestion(@Param("questionID") String questionID);
 
-    @Select("UPDATE  student SET examID = #{examID}, type = #{type}, title = #{title},  " +
+    @Update("UPDATE  student SET examID = #{examID}, type = #{type}, title = #{title},  " +
             "options = #{options}, score = #{score}  WHERE questionID = #{questionID}")
     int updateStudent(QuestionDao question);
 }
