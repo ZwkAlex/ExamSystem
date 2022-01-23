@@ -1,9 +1,6 @@
 package com.group.exam.controller;
 
-import com.group.exam.model.entity.Course;
-import com.group.exam.model.entity.Exam;
-import com.group.exam.model.entity.Question;
-import com.group.exam.model.entity.Student;
+import com.group.exam.model.entity.*;
 import com.group.exam.model.requestModel.*;
 import com.group.exam.model.responseModel.ResponseModel;
 import com.group.exam.service.impl.TeacherService;
@@ -67,10 +64,30 @@ public class TeacherController {
         return ResponseEntity.ok(teacherService.updateStudent(request));
     }
 
+
+    @RequestMapping(value = "/teacher/question/list", method = RequestMethod.POST)
+    public ResponseEntity<ResponseModel> getQuestionList(@RequestBody TeacherExamInfoRequest request){
+        log.info(String.format(" 查询试卷： -%s- 的试题列表", request.getExamID()));
+        return ResponseEntity.ok().body(teacherService.getQuestionList(request));
+    }
+
+
     @RequestMapping(value = "/teacher/question/add", method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> addQuestion(@RequestBody QuestionRequest question) {
         log.info(String.format(" 添加试题： -%s- /n 答案：-%s- ", question.getTitle(), question.getAnswer()));
         return ResponseEntity.ok().body(teacherService.addQuestion(question));
+    }
+
+    @RequestMapping(value = "/teacher/question/delete", method = RequestMethod.POST)
+    public ResponseEntity<ResponseModel> deleteQuestion(@RequestBody Question question){
+        log.info(String.format(" 移除试题： -%s- ", question.getQuestionID()));
+        return ResponseEntity.ok().body(teacherService.deleteQuestion(question.getQuestionID()));
+    }
+
+    @RequestMapping(value = "/teacher/question/update", method = RequestMethod.POST)
+    public ResponseEntity<ResponseModel> updateQuestion(@RequestBody QuestionRequest question){
+        log.info(String.format("更新试题： -%s- ", question.getQuestionID()));
+        return ResponseEntity.ok().body(teacherService.updateQuestion(question));
     }
 
     @RequestMapping(value = "/teacher/course/list", method = RequestMethod.POST)
@@ -98,18 +115,6 @@ public class TeacherController {
     }
 
 
-    @RequestMapping(value = "/teacher/question/delete", method = RequestMethod.POST)
-    public ResponseEntity<ResponseModel> deleteQuestion(@RequestBody Question question){
-        log.info(String.format(" 移除试题： -%s- ", question.getQuestionID()));
-        return ResponseEntity.ok().body(teacherService.deleteQuestion(question.getQuestionID()));
-    }
-
-    @RequestMapping(value = "/teacher/question/update", method = RequestMethod.POST)
-    public ResponseEntity<ResponseModel> updateQuestion(@RequestBody QuestionRequest question){
-        log.info(String.format("更新试题： -%s- ", question.getQuestionID()));
-        return ResponseEntity.ok().body(teacherService.updateQuestion(question));
-    }
-
     @RequestMapping(value = "/teacher/course/add", method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> addCourse(@RequestBody Course course) {
         log.info(String.format("教师 -%s-  发布课程 -%s- ", course.gettID(), course.getCourseID()));
@@ -127,6 +132,19 @@ public class TeacherController {
         log.info(String.format("更新课程： -%s- ", course.getCourseID()));
         return ResponseEntity.ok().body(teacherService.updateCourse(course));
     }
+
+    @RequestMapping(value = "/teacher/student/exam/score/update", method = RequestMethod.POST)
+    public ResponseEntity<ResponseModel> updateStudentExamScore(@RequestBody StudentExam studentExam){
+        log.info(String.format("更新学生-%s- -%s- 的成绩", studentExam.getsID(),studentExam.getExamID()));
+        return ResponseEntity.ok().body(teacherService.updateStudentExamScore(studentExam));
+    }
+
+    @RequestMapping(value = "/teacher/student/exam/status/update", method = RequestMethod.POST)
+    public ResponseEntity<ResponseModel> updateStudentExamStatus(@RequestBody StudentExam studentExam){
+        log.info(String.format("更新学生-%s- -%s- 的状态", studentExam.getsID(),studentExam.getExamID()));
+        return ResponseEntity.ok().body(teacherService.updateStudentExamStatus(studentExam));
+    }
+
 
     @RequestMapping(value = "/teacher/exam/add", method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> addExam(@RequestBody AlterExamRequest request){
@@ -169,9 +187,14 @@ public class TeacherController {
     }
 
     @RequestMapping(value = "/teacher/exam/list/lite",method = RequestMethod.POST)
-    public ResponseEntity<ResponseModel> getTeacherExamListLite(@RequestBody Exam exam){
-        log.info(String.format(" 获取课程lite列表： -%s- ", exam.getCourseID()));
-        return ResponseEntity.ok().body(teacherService.getTeacherExamListLite(exam.getCourseID()));
+    public ResponseEntity<ResponseModel> getTeacherExamListLite(){
+        try {
+            String id = authUtil.getUserID();
+            log.info(String.format("教师 -%s- 查询考试lite列表", id));
+            return ResponseEntity.ok().body(teacherService.getTeacherExamListLite(id));
+        }catch (Exception e) {
+            return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
+        }
     }
 
     @RequestMapping(value = "/teacher/major/list",method = RequestMethod.POST)
@@ -195,8 +218,19 @@ public class TeacherController {
     public ResponseEntity<ResponseModel> getStudentExamList(@RequestBody TeacherExamInfoRequest request){
         try {
             String id = authUtil.getUserID();
-            log.info(String.format("教师 -%s- 查询考试 -%s- 的待评卷列表", id, request.getExamID()));
+            log.info(String.format("教师 -%s- 查询考试 -%s- 的学生列表", id, request.getExamID()));
             return ResponseEntity.ok().body(teacherService.getStudentExamList(request));
+        }catch (Exception e){
+            return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
+        }
+    }
+
+    @RequestMapping(value = "/teacher/exam/student/mark/list", method = RequestMethod.POST)
+    public ResponseEntity<ResponseModel> getStudentExamNeedMarkList(@RequestBody TeacherExamInfoRequest request){
+        try {
+            String id = authUtil.getUserID();
+            log.info(String.format("教师 -%s- 查询考试 -%s- 的待评卷列表", id, request.getExamID()));
+            return ResponseEntity.ok().body(teacherService.getStudentExamNeedMarkList(request));
         }catch (Exception e){
             return ResponseEntity.ok().body(ResponseUtil.error(e.getMessage()));
         }

@@ -83,8 +83,22 @@ public class TeacherService implements  TeacherServiceInterface {
     @Override
     public ResponseModel updateStudent(AlterStudentRequest request) {
         return studentMapper.updateStudent(request) == 1&&userMapper.changePassword(request.getsID(),request.getPassword()) == 1?
-                ResponseUtil.success("编辑成功"):
-                ResponseUtil.error("编辑失败");
+                ResponseUtil.success("修改成功"):
+                ResponseUtil.error("修改失败");
+    }
+
+    @Override
+    public ResponseModel getQuestionList(TeacherExamInfoRequest request) {
+        List<QuestionDao> questionDaoList = questionMapper.findAllByExamID(request.getExamID());
+        List<QuestionWithAnswerModel> questionList = new ArrayList<>();
+        for(QuestionDao questionDao : questionDaoList) {
+            QuestionWithAnswerModel temp = new QuestionWithAnswerModel(questionDao);
+            AnswerDao answerDao = answerMapper.findByQuestionID(questionDao.getQuestionID());
+            Answer answer = new Answer(answerDao);
+            temp.setAnswers(answer.getAnswer());
+            questionList.add(temp);
+        }
+        return ResponseUtil.success(questionList);
     }
 
     @Override
@@ -103,9 +117,14 @@ public class TeacherService implements  TeacherServiceInterface {
     public ResponseModel deleteQuestion(String questionID) {
         if (questionMapper.findByQuestionID(questionID) == null)
             return ResponseUtil.error("不存在该题目标识号");
-        return questionMapper.deleteQuestion(questionID) == 1 && answerMapper.deleteAnswer(questionID) == 1?
-                ResponseUtil.success("删除成功"):
-                ResponseUtil.error("删除失败");
+        try{
+            questionMapper.deleteQuestion(questionID);
+            answerMapper.deleteAnswer(questionID);
+            studentAnswerMapper.deleteAllStudentAnswerByQuestionID(questionID);
+            return ResponseUtil.success("删除成功");
+        }catch (Exception e) {
+            return ResponseUtil.error("删除失败");
+        }
     }
 
     @Override
@@ -116,8 +135,8 @@ public class TeacherService implements  TeacherServiceInterface {
         Question question = new Question(questionRequest);
         return questionMapper.updateStudent(new QuestionDao(question))== 1&&
                 answerMapper.updateAnswer(new AnswerDao(answer)) == 1?
-                ResponseUtil.success("编辑成功"):
-                ResponseUtil.error("编辑失败");
+                ResponseUtil.success("修改成功"):
+                ResponseUtil.error("修改失败");
     }
 
     @Override
@@ -148,9 +167,18 @@ public class TeacherService implements  TeacherServiceInterface {
     public ResponseModel deleteCourse(String courseID) {
         if(courseMapper.findByCourseID(courseID) == null)
             return ResponseUtil.error("该课程号不存在");
-        return courseMapper.deleteCourse(courseID) == 1?
-                ResponseUtil.success("删除成功"):
-                ResponseUtil.error("删除失败");
+        try{
+            List<Exam> examList = examMapper.findAllByCourseID(courseID);
+            if(examList != null && examList.size() > 0){
+                return ResponseUtil.error("删除失败: 请先至考试管理界面删除课程下的所有考试");
+            }else{
+                courseMapper.deleteCourse(courseID);
+                return ResponseUtil.success("删除成功");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseUtil.error("删除失败:"+e.getMessage());
+        }
     }
 
     @Override
@@ -158,8 +186,35 @@ public class TeacherService implements  TeacherServiceInterface {
         if(courseMapper.findByCourseID(course.getCourseID()) == null)
             return ResponseUtil.error("该课程号不存在");
         return courseMapper.updateCourse(course) == 1?
-                ResponseUtil.success("编辑成功"):
-                ResponseUtil.error("编辑失败");
+                ResponseUtil.success("修改成功"):
+                ResponseUtil.error("修改失败");
+    }
+
+    @Override
+    public ResponseModel updateStudentExamScore(StudentExam studentExam) {
+        try {
+            studentExamMapper.updateStudentExamScore(studentExam.getsID(), studentExam.getExamID(), studentExam.getScore());
+            return ResponseUtil.success("修改成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseUtil.error("修改失败");
+        }
+
+    }
+
+    @Override
+    public ResponseModel updateStudentExamStatus(StudentExam studentExam) {
+        try {
+            if(ExamStatus.get(studentExam.getStatus()) != null) {
+                studentExamMapper.updateStudentExamStatus(studentExam.getsID(), studentExam.getExamID(), studentExam.getStatus());
+                return ResponseUtil.success("修改成功");
+            }else{
+                return ResponseUtil.error("修改失败，无权修改");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseUtil.error("修改失败");
+        }
     }
 
     @Override
@@ -183,7 +238,10 @@ public class TeacherService implements  TeacherServiceInterface {
         if(examMapper.findByExamID(request.getExamID()) == null)
             return ResponseUtil.error("该考卷号不存在");
         examMapper.deleteExam(request.getExamID());
-        studentExamMapper.deleteAllStudentExamByExamID(request.getExamID());
+        studentExamMapper.updateAllStudentExamStatus(request.getExamID(),ExamStatus.CANCELLED.getValue());
+        studentAnswerMapper.deleteAllStudentAnswerByExamID(request.getExamID());
+        questionMapper.deleteAllQuestionsByExamID(request.getExamID());
+        answerMapper.deleteAllAnswerByExamID(request.getExamID());
         return ResponseUtil.success();
     }
 
@@ -199,11 +257,11 @@ public class TeacherService implements  TeacherServiceInterface {
                 if (!studentExamMapper.checkStudentExam(s_e))
                     studentExamMapper.insertStudentExam(s_e);
             }
-            return ResponseUtil.success("分配考试成功");
+            return ResponseUtil.success("发布考试成功");
         }catch (Exception e){
             e.printStackTrace();
+            return ResponseUtil.error("发布考试失败");
         }
-        return ResponseUtil.error("分配考试失败");
     }
 
     @Override
@@ -235,20 +293,33 @@ public class TeacherService implements  TeacherServiceInterface {
             return ResponseUtil.success(examListResponseList);
         }catch(Exception e){
             e.printStackTrace();
-            return ResponseUtil.error("获取教师考试信息时发生未知的错误。");
+            return ResponseUtil.error("获取教师考卷信息时发生未知的错误。");
         }
     }
 
     @Override
-    public ResponseModel getTeacherExamListLite(String courseID) {
-        List<ExamLiteListResponse> examLiteList = new ArrayList<>();
-        for(ExamLiteDao examLiteDao:examMapper.findLiteAllByCourseID(courseID)){
-            ExamLiteListResponse temp = new ExamLiteListResponse();
-            temp.setExamID(examLiteDao.getExamID());
-            temp.setStartToStop(ExamUtil.StartToStopStringFormat(examLiteDao.getStartDate(),examLiteDao.getEndDate()));
-            examLiteList.add(temp);
+    public ResponseModel getTeacherExamListLite(String tID) {
+        try {
+            List<ExamLiteListResponse> examLiteList = new ArrayList<>();
+            List<CourseLiteDao> courseList = courseMapper.findLiteAllByTID(tID);
+            for (CourseLiteDao course : courseList) {
+                ExamLiteListResponse temp = new ExamLiteListResponse();
+                temp.setCourseID(course.getCourseID());
+                temp.setCourseName(course.getCourseName());
+                List<ExamLiteModel> examList = new ArrayList<>();
+                for (ExamLiteDao examLiteDao : examMapper.findLiteAllByCourseID(course.getCourseID())) {
+                    ExamLiteModel lite = new ExamLiteModel();
+                    lite.setExamID(examLiteDao.getExamID());
+                    lite.setStartToStop(ExamUtil.StartToStopStringFormat(examLiteDao.getStartDate(), examLiteDao.getEndDate()));
+                    examList.add(lite);
+                }
+                temp.setExamList(examList);
+                examLiteList.add(temp);
+            }
+            return ResponseUtil.success(examLiteList);
+        }catch (Exception e){
+            return ResponseUtil.error("获取教师考卷信息时发生未知的错误。");
         }
-        return ResponseUtil.success(examLiteList);
     }
 
     @Override
@@ -273,6 +344,7 @@ public class TeacherService implements  TeacherServiceInterface {
             int marked = 0, unfinished = 0, finished = 0;
             for (StudentExam s_e : s_eList) {
                 switch (ExamStatus.get(s_e.getStatus())) {
+                    case DELETED:
                     case MARKED:
                         marked += 1;
                         break;
@@ -289,6 +361,7 @@ public class TeacherService implements  TeacherServiceInterface {
             teacherExamInfoResponse.setFinished(finished);
             teacherExamInfoResponse.setUnFinished(unfinished);
             teacherExamInfoResponse.setMarked(marked);
+            teacherExamInfoResponse.setTotalFinished(marked + finished);
             return ResponseUtil.success(teacherExamInfoResponse);
         }catch (Exception e){
             e.printStackTrace();
@@ -304,7 +377,30 @@ public class TeacherService implements  TeacherServiceInterface {
             for (StudentExam s_e : s_eList) {
                 StudentNeedExam temp = new StudentNeedExam();
                 temp.set(s_e);
-                temp.set(studentMapper.findByID(s_e.getsID()));
+                Student student = studentMapper.findByID(s_e.getsID());
+                temp.set(student);
+                temp.setmName(majorMapper.findByID(student.getsMajorID()).getmName());
+                studentNeedExamList.add(temp);
+            }
+            return ResponseUtil.success(studentNeedExamList);
+        }catch (Exception e){
+            e.printStackTrace();
+            return  ResponseUtil.error("获取学生考试信息列表过程中发生未知错误");
+        }
+    }
+
+    @Override
+    public ResponseModel getStudentExamNeedMarkList(TeacherExamInfoRequest teacherExamInfoRequest) {
+        try {
+            List<StudentExam> s_eList = studentExamMapper.findAllByExamID(teacherExamInfoRequest.getExamID());
+            List<StudentExamNeedMark> studentNeedExamList = new ArrayList<>();
+            for (StudentExam s_e : s_eList) {
+                StudentExamNeedMark temp = new StudentExamNeedMark();
+                temp.setsID(s_e.getsID());
+                Student student = studentMapper.findByID(s_e.getsID());
+                temp.setsName(student.getsName());
+                temp.setCollege(student.getCollege());
+                temp.setmName(majorMapper.findByID(student.getsMajorID()).getmName());
                 studentNeedExamList.add(temp);
             }
             return ResponseUtil.success(studentNeedExamList);

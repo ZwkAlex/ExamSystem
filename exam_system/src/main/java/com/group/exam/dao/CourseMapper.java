@@ -12,7 +12,7 @@ public interface CourseMapper {
             "VALUES(#{courseID},#{tID},#{courseName},#{description})")
     int insertCourse(Course course);
 
-    @Delete("DELETE FROM course WHERE courseid = {#courseID}")
+    @Delete("DELETE FROM course WHERE courseid = #{courseID}")
     int deleteCourse(@Param("courseID") String courseID);
 
     @Select("SELECT * FROM course WHERE courseid = #{courseID}")

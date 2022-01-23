@@ -1,5 +1,6 @@
 package com.group.exam.model.responseModel;
 
+import com.group.exam.model.cusEnum.ExamStatus;
 import com.group.exam.model.entity.Student;
 import com.group.exam.model.entity.StudentExam;
 
@@ -7,15 +8,16 @@ public class StudentNeedExam{
     private String sID;
     private String sName;
     private String college;
+    private String mName;
     private String sMajorID;
-    private int status;
+    private String status;
     private double score;
 
     public StudentNeedExam(){}
 
     public void set(StudentExam studentExam){
         this.sID = studentExam.getsID();
-        this.status = studentExam.getStatus();
+        this.status = ExamStatus.get(studentExam.getStatus()).getMsg();
         this.score = studentExam.getScore();
     }
 
@@ -34,11 +36,11 @@ public class StudentNeedExam{
         this.sID = sID;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -72,5 +74,13 @@ public class StudentNeedExam{
 
     public void setsMajorID(String sMajorID) {
         this.sMajorID = sMajorID;
+    }
+
+    public String getmName() {
+        return mName;
+    }
+
+    public void setmName(String mName) {
+        this.mName = mName;
     }
 }

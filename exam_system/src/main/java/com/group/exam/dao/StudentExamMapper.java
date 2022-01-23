@@ -30,7 +30,6 @@ public interface StudentExamMapper {
     @Update("UPDATE s_e SET score = #{score} WHERE sid = #{sID} AND examid = #{examID}")
     int updateStudentExamScore(@Param("sID") String sID,@Param("examID") String examID,@Param("score") double score);
 
-    @Delete("DELETE FROM s_e WHERE examid=#{examID}")
-    int deleteAllStudentExamByExamID(@Param("examID") String examID);
-
+    @Update("UPDATE s_e SET status = #{status} WHERE examid = #{examID}")
+    int updateAllStudentExamStatus(@Param("examID") String examID,@Param("status") int status);
 }

@@ -60,7 +60,7 @@ public class ExamUtil {
             case MARKED:
                 return String.format("%.2f 分", score);
             case CANCELLED:
-                return "取消";
+                return ExamStatus.CANCELLED.getMsg();
             default:
                 return "-";
         }

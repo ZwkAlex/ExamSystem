@@ -2,10 +2,7 @@ package com.group.exam.dao;
 
 import com.group.exam.model.daoModel.StudentAnswerDao;
 import com.group.exam.model.entity.StudentAnswer;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -21,4 +18,10 @@ public interface StudentAnswerMapper {
             "AND questionid = #{questionID}")
     int setScore(@Param("sID")String sID, @Param("examID")String examID, @Param("questionID") String questionID,
                  @Param("score") double score);
+
+    @Delete("DELETE FROM studentanswer WHERE examid = #{examID}")
+    int deleteAllStudentAnswerByExamID(@Param("examID")String examID);
+
+    @Delete("DELETE FROM studentanswer WHERE Questionid = #{QuestionID}")
+    int deleteAllStudentAnswerByQuestionID(@Param("QuestionID")String QuestionID);
 }

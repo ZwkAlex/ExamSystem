@@ -168,6 +168,9 @@ public class ExamService implements ExamServiceInterface {
         if(!studentMapper.checkStudent(id)){
             return ResponseUtil.error("错误的学生ID");
         }
+        if(examMapper.findByExamID(examID) == null){
+            return ResponseUtil.error("错误的考卷号，考试不存在");
+        }
         try {
             examTimerMapper.stopExam(id, examID);
         }catch(Exception e){
