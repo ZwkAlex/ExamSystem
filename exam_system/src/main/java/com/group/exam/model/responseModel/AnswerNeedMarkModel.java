@@ -1,8 +1,8 @@
 package com.group.exam.model.responseModel;
 
-import java.util.List;
 
 public class AnswerNeedMarkModel {
+    private String questionID;
     private String title;
     private int type;
     private String typeString;
@@ -10,6 +10,14 @@ public class AnswerNeedMarkModel {
     private String trueAnswer;
     private AutoMarkModel autoMark;
     private double score;
+
+    public String getQuestionID() {
+        return questionID;
+    }
+
+    public void setQuestionID(String questionID) {
+        this.questionID = questionID;
+    }
 
     public String getTitle() {
         return title;
@@ -43,7 +51,7 @@ public class AnswerNeedMarkModel {
         this.trueAnswer = trueAnswer;
     }
 
-    public AutoMarkModel isAutoMark() {
+    public AutoMarkModel getAutoMark() {
         return autoMark;
     }
 

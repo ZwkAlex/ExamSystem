@@ -21,7 +21,7 @@ public interface StudentExamMapper {
     @Select("SELECT COUNT(*)=1 FROM s_e WHERE sID = #{sID} AND examID = #{examID}")
     boolean checkStudentExam(StudentExam studentExam);
 
-    @Insert("INSERT INTO s_e(sid,examid) VALUES(#{sID},#{examID}))")
+    @Insert("INSERT INTO s_e(sid,examid) VALUES(#{sID},#{examID})")
     int insertStudentExam(StudentExam studentExam);
 
     @Update("UPDATE s_e SET status = #{status} WHERE sid = #{sID} AND examid = #{examID}")

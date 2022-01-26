@@ -74,7 +74,7 @@ public class TeacherController {
 
     @RequestMapping(value = "/teacher/question/add", method = RequestMethod.POST)
     public ResponseEntity<ResponseModel> addQuestion(@RequestBody QuestionRequest question) {
-        log.info(String.format(" 添加试题： -%s- /n 答案：-%s- ", question.getTitle(), question.getAnswer()));
+        log.info(String.format(" 添加试题： -%s- /n 答案：-%s- ", question.getTitle(), question.getAnswers()));
         return ResponseEntity.ok().body(teacherService.addQuestion(question));
     }
 

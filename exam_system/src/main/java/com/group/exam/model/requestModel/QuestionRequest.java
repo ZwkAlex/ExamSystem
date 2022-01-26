@@ -9,7 +9,7 @@ public class QuestionRequest {
     private String type;
     private List<String> options;
     private double score;
-    private List<String> answer;
+    private List<String> answers;
 
     public String getQuestionID() {
         return questionID;
@@ -59,11 +59,11 @@ public class QuestionRequest {
         this.score = score;
     }
 
-    public List<String> getAnswer() {
-        return answer;
+    public List<String> getAnswers() {
+        return answers;
     }
 
-    public void setAnswer(List<String> answer) {
-        this.answer = answer;
+    public void setAnswers(List<String> answers) {
+        this.answers = answers;
     }
 }

@@ -133,7 +133,7 @@ public class TeacherService implements  TeacherServiceInterface {
             return ResponseUtil.error("不存在该题目标识号");
         Answer answer = new Answer(questionRequest);
         Question question = new Question(questionRequest);
-        return questionMapper.updateStudent(new QuestionDao(question))== 1&&
+        return questionMapper.updateQuestion(new QuestionDao(question))== 1&&
                 answerMapper.updateAnswer(new AnswerDao(answer)) == 1?
                 ResponseUtil.success("修改成功"):
                 ResponseUtil.error("修改失败");
@@ -141,13 +141,13 @@ public class TeacherService implements  TeacherServiceInterface {
 
     @Override
     public ResponseModel getCourseList(String id) {
-        List<Course> courses = courseMapper.findAllByTID(id);
+        List<CourseDao> courses = courseMapper.findAllValidByTID(id);
         return courses != null?ResponseUtil.success(courses):ResponseUtil.error("暂无课程");
     }
 
     @Override
     public ResponseModel getCourseListLite(String id) {
-        List<CourseLiteDao> courses = courseMapper.findLiteAllByTID(id);
+        List<CourseLiteDao> courses = courseMapper.findLiteAllValidByTID(id);
         if(courses == null)
             courses = new ArrayList<>();
         return ResponseUtil.success(courses);
@@ -168,13 +168,13 @@ public class TeacherService implements  TeacherServiceInterface {
         if(courseMapper.findByCourseID(courseID) == null)
             return ResponseUtil.error("该课程号不存在");
         try{
-            List<Exam> examList = examMapper.findAllByCourseID(courseID);
+            List<ExamDao> examList = examMapper.findAllValidByCourseID(courseID);
             if(examList != null && examList.size() > 0){
-                return ResponseUtil.error("删除失败: 请先至考试管理界面删除课程下的所有考试");
+                courseMapper.updateCourseToInvalid(courseID);
             }else{
                 courseMapper.deleteCourse(courseID);
-                return ResponseUtil.success("删除成功");
             }
+            return ResponseUtil.success("删除成功");
         }catch(Exception e){
             e.printStackTrace();
             return ResponseUtil.error("删除失败:"+e.getMessage());
@@ -237,8 +237,12 @@ public class TeacherService implements  TeacherServiceInterface {
     public ResponseModel deleteExam(AlterExamRequest request) {
         if(examMapper.findByExamID(request.getExamID()) == null)
             return ResponseUtil.error("该考卷号不存在");
-        examMapper.deleteExam(request.getExamID());
-        studentExamMapper.updateAllStudentExamStatus(request.getExamID(),ExamStatus.CANCELLED.getValue());
+        if(studentExamMapper.findAllByExamID(request.getExamID()).size() > 0){
+            examMapper.updateExamToInvalid(request.getExamID());
+        }else{
+            examMapper.deleteExam(request.getExamID());
+        }
+        studentExamMapper.updateAllStudentExamStatus(request.getExamID(),ExamStatus.DELETED.getValue());
         studentAnswerMapper.deleteAllStudentAnswerByExamID(request.getExamID());
         questionMapper.deleteAllQuestionsByExamID(request.getExamID());
         answerMapper.deleteAllAnswerByExamID(request.getExamID());
@@ -249,7 +253,7 @@ public class TeacherService implements  TeacherServiceInterface {
     @Override
     public ResponseModel assignExam(AssignMajorExamRequest assignExamRequest) {
         try {
-            List<Student> studentList = studentMapper.findBySmajorID(assignExamRequest.getSmajorID());
+            List<Student> studentList = studentMapper.findBySmajorID(assignExamRequest.getsMajorID());
             for (Student student : studentList) {
                 StudentExam s_e = new StudentExam();
                 s_e.setExamID(assignExamRequest.getExamID());
@@ -269,13 +273,13 @@ public class TeacherService implements  TeacherServiceInterface {
         try {
             if(tID == null) return ResponseUtil.error("错误的请求");
             List<TeacherExamListResponse> examListResponseList = new ArrayList<>();
-            List<Course> courseList = courseMapper.findAllByTID(tID);
-            for (Course course : courseList) {
+            List<CourseDao> courseList = courseMapper.findAllValidByTID(tID);
+            for (CourseDao course : courseList) {
                 TeacherExamListResponse examListResponse = new TeacherExamListResponse();
                 examListResponse.setCourseID(course.getCourseID());
                 examListResponse.setCourseName(course.getCourseName());
                 List<TeacherExamResponse> examList = new ArrayList<>();
-                for (Exam exam : examMapper.findAllByCourseID(course.getCourseID())) {
+                for (ExamDao exam : examMapper.findAllValidByCourseID(course.getCourseID())) {
                     TeacherExamResponse temp = new TeacherExamResponse();
                     temp.setExamID(exam.getExamID());
                     temp.setStartDate(exam.getStartDate().toString());
@@ -301,13 +305,13 @@ public class TeacherService implements  TeacherServiceInterface {
     public ResponseModel getTeacherExamListLite(String tID) {
         try {
             List<ExamLiteListResponse> examLiteList = new ArrayList<>();
-            List<CourseLiteDao> courseList = courseMapper.findLiteAllByTID(tID);
+            List<CourseLiteDao> courseList = courseMapper.findLiteAllValidByTID(tID);
             for (CourseLiteDao course : courseList) {
                 ExamLiteListResponse temp = new ExamLiteListResponse();
                 temp.setCourseID(course.getCourseID());
                 temp.setCourseName(course.getCourseName());
                 List<ExamLiteModel> examList = new ArrayList<>();
-                for (ExamLiteDao examLiteDao : examMapper.findLiteAllByCourseID(course.getCourseID())) {
+                for (ExamLiteDao examLiteDao : examMapper.findLiteAllValidByCourseID(course.getCourseID())) {
                     ExamLiteModel lite = new ExamLiteModel();
                     lite.setExamID(examLiteDao.getExamID());
                     lite.setStartToStop(ExamUtil.StartToStopStringFormat(examLiteDao.getStartDate(), examLiteDao.getEndDate()));
@@ -332,8 +336,8 @@ public class TeacherService implements  TeacherServiceInterface {
     public ResponseModel getTeacherExamInfo(TeacherExamInfoRequest teacherExamInfoRequest) {
         try {
             TeacherExamInfoResponse teacherExamInfoResponse = new TeacherExamInfoResponse();
-            Exam exam = examMapper.findByExamID(teacherExamInfoRequest.getExamID());
-            Course course = courseMapper.findByCourseID(exam.getCourseID());
+            ExamDao exam = examMapper.findByExamID(teacherExamInfoRequest.getExamID());
+            CourseDao course = courseMapper.findValidByCourseID(exam.getCourseID());
             teacherExamInfoResponse.setCourseName(course.getCourseName());
             teacherExamInfoResponse.setExamID(exam.getExamID());
             teacherExamInfoResponse.setStartDate(exam.getStartDate().toString());
@@ -392,7 +396,7 @@ public class TeacherService implements  TeacherServiceInterface {
     @Override
     public ResponseModel getStudentExamNeedMarkList(TeacherExamInfoRequest teacherExamInfoRequest) {
         try {
-            List<StudentExam> s_eList = studentExamMapper.findAllByExamID(teacherExamInfoRequest.getExamID());
+            List<StudentExam> s_eList = studentExamMapper.findAllFinishedWithExamID(teacherExamInfoRequest.getExamID());
             List<StudentExamNeedMark> studentNeedExamList = new ArrayList<>();
             for (StudentExam s_e : s_eList) {
                 StudentExamNeedMark temp = new StudentExamNeedMark();
@@ -423,12 +427,17 @@ public class TeacherService implements  TeacherServiceInterface {
     @Override
     public ResponseModel getNextStudentExamNeedMark(NextStudentExamNeedMarkRequest nextStudentExamNeedMarkRequest) {
         try {
-            StudentExamNeedMarkRequest studentExamNeedMarkRequest = (StudentExamNeedMarkRequest) nextStudentExamNeedMarkRequest;
+            StudentExamNeedMarkRequest studentExamNeedMarkRequest =  new StudentExamNeedMarkRequest();
+            studentExamNeedMarkRequest.setExamID(nextStudentExamNeedMarkRequest.getExamID());
             List<StudentExam> s_eList= studentExamMapper.findAllFinishedWithExamID(studentExamNeedMarkRequest.getExamID());
-            StudentExam s_e= s_eList.get(0);
-            studentExamNeedMarkRequest.setsID(s_e.getsID());
-            studentExamMapper.updateStudentExamStatus(s_e.getsID(),s_e.getExamID(), ExamStatus.MARKING.getValue());
-            return ResponseUtil.success(getStudentExamNeedMarkResponse(studentExamNeedMarkRequest));
+            if(s_eList.size() > 0){
+                StudentExam s_e= s_eList.get(0);
+                studentExamNeedMarkRequest.setsID(s_e.getsID());
+                studentExamMapper.updateStudentExamStatus(s_e.getsID(),s_e.getExamID(), ExamStatus.MARKING.getValue());
+                return ResponseUtil.success(getStudentExamNeedMarkResponse(studentExamNeedMarkRequest));
+            }else{
+                return ResponseUtil.success("已无待评卷试卷");
+            }
         }catch (Exception e){
             e.printStackTrace();
             return ResponseUtil.error("在获取下一个学生答卷时发生错误。");
@@ -449,9 +458,11 @@ public class TeacherService implements  TeacherServiceInterface {
             Question question = new Question(questionMapper.findByQuestionID(answer.getQuestionID()));
             Answer true_answer = new Answer(answerMapper.findByQuestionID(answer.getQuestionID()));
             AnswerNeedMarkModel temp = new AnswerNeedMarkModel();
+            temp.setQuestionID(question.getQuestionID());
             temp.setTitle(question.getTitle());
             temp.setType(question.getType().getValue());
             temp.setTypeString(question.getType().getMsg());
+            temp.setScore(question.getScore());
             temp.setStudentAnswer(ExamUtil.expandAnswer(question, answer.getAnswer()));
             temp.setTrueAnswer(ExamUtil.expandAnswer(question, true_answer.getAnswer()));
             temp.setAutoMark(ExamUtil.AutoMark(
@@ -460,14 +471,14 @@ public class TeacherService implements  TeacherServiceInterface {
             answerNeedMarkList.add(temp);
         }
         studentExamNeedMarkResponse.setAnswers(answerNeedMarkList);
-        return studentExamNeedMarkResponse;
+            return studentExamNeedMarkResponse;
     }
 
     @Override
     public ResponseModel submitMarkedExam(MarkedExamRequest markedExamRequest) {
         try {
             double totalScore = 0;
-            for (MarkedAnswerModel markedAnswer : markedExamRequest.getMarkedAnswers()) {
+            for (MarkedScoreModel markedAnswer : markedExamRequest.getScores()) {
                 totalScore += markedAnswer.getScore();
                 studentAnswerMapper.setScore(markedExamRequest.getsID(),
                         markedExamRequest.getExamID(),markedAnswer.getQuestionID(), markedAnswer.getScore());

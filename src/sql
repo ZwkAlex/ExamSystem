@@ -54,9 +54,10 @@ CREATE TABLE course(
 courseid VARCHAR(64)  NOT NULL PRIMARY KEY,
 tid VARCHAR(20),
 coursename VARCHAR(256) DEFAULT NULL,
-description TEXT DEFAULT NULL
+description TEXT DEFAULT NULL,
+isValid BOOLEAN DEFAULT true
 );
-INSERT INTO course VALUES('1','2', 'cname','description');
+INSERT INTO course VALUES('1','2', 'cname','description',true);
 SELECT * FROM course;
 
 DROP TABLE IF EXISTS exam;
@@ -66,11 +67,12 @@ courseid VARCHAR(64) NOT NULL,
 startdate TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
 enddate TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
 duration INT,
-totalScore INT DEFAULT 0
+totalScore INT DEFAULT 0,
+isValid BOOLEAN DEFAULT true
 );
-INSERT INTO exam VALUES('1','1', now(), date_add(now(), interval 30 day),60,0);
-INSERT INTO exam VALUES('2','1', now(), date_add(now(), interval 50 day),120,0);
-INSERT INTO exam VALUES('3','1', now(), date_add(now(), interval 60 day),150,0);
+INSERT INTO exam VALUES('1','1', now(), date_add(now(), interval 30 day),60,0,true);
+INSERT INTO exam VALUES('2','1', now(), date_add(now(), interval 50 day),120,0,true);
+INSERT INTO exam VALUES('3','1', now(), date_add(now(), interval 60 day),150,0,true);
 SELECT * FROM exam;
 
 DROP TABLE IF EXISTS question;

@@ -22,7 +22,7 @@ public class Answer {
     public Answer(QuestionRequest questionRequest){
         examID = questionRequest.getExamID();
         questionID = questionRequest.getQuestionID();
-        answer = questionRequest.getAnswer();
+        answer = questionRequest.getAnswers();
     }
 
 

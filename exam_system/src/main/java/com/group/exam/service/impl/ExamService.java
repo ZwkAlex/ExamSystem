@@ -1,6 +1,8 @@
 package com.group.exam.service.impl;
 
 import com.group.exam.dao.*;
+import com.group.exam.model.daoModel.CourseDao;
+import com.group.exam.model.daoModel.ExamDao;
 import com.group.exam.model.daoModel.QuestionDao;
 import com.group.exam.model.daoModel.StudentAnswerDao;
 import com.group.exam.model.entity.*;
@@ -51,8 +53,8 @@ public class ExamService implements ExamServiceInterface {
             List<StudentExamResponse> examList = new ArrayList<>();
             List<StudentExam> studentExamList = studentExamMapper.findAllBySID(sID);
             for (StudentExam s_e : studentExamList) {
-                Exam exam = examMapper.findByExamID(s_e.getExamID());
-                Course course = courseMapper.findByCourseID(exam.getCourseID());
+                ExamDao exam = examMapper.findByExamID(s_e.getExamID());
+                CourseDao course = courseMapper.findByCourseID(exam.getCourseID());
                 StudentExamResponse temp = new StudentExamResponse(course,exam);
                 examList.add(temp);
             }
@@ -75,8 +77,8 @@ public class ExamService implements ExamServiceInterface {
         String examID = request.getExamID();
         try{
             StudentExam studentExam = studentExamMapper.findBySIDAndExamID(id,examID);
-            Exam exam = examMapper.findByExamID(examID);
-            Course course = courseMapper.findByCourseID(exam.getCourseID());
+            ExamDao exam = examMapper.findByExamID(examID);
+            CourseDao course = courseMapper.findByCourseID(exam.getCourseID());
             Teacher teacher = teacherMapper.findByID(course.gettID());
             StudentExamInfoResponse response = new StudentExamInfoResponse(course, exam, teacher);
             response.setNumberOfQuestions(String.format("%d 题",questionMapper.countByExamID(examID)));
@@ -118,8 +120,8 @@ public class ExamService implements ExamServiceInterface {
             List<ScoreResponse> scoreList = new ArrayList<>();
             List<StudentExam> studentExamList = studentExamMapper.findAllBySID(id);
             for (StudentExam studentExam : studentExamList) {
-                Exam exam = examMapper.findByExamID(studentExam.getExamID());
-                Course course = courseMapper.findByCourseID(exam.getCourseID());
+                ExamDao exam = examMapper.findByExamID(studentExam.getExamID());
+                CourseDao course = courseMapper.findByCourseID(exam.getCourseID());
                 Teacher teacher = teacherMapper.findByID(course.gettID());
                 ScoreResponse temp = new ScoreResponse();
                 temp.setCourseName(course.getCourseName());
@@ -144,7 +146,7 @@ public class ExamService implements ExamServiceInterface {
         if(!studentMapper.checkStudent(id)){
             return ResponseUtil.error("错误的学生ID");
         }
-        Exam exam = examMapper.findByExamID(examID);
+        ExamDao exam = examMapper.findByExamID(examID);
         Timestamp now = new Timestamp(System.currentTimeMillis());
         if(now.before(exam.getStartDate()) || now.after(exam.getEndDate())){
             return ResponseUtil.error("所选考试不在时间范围内。");

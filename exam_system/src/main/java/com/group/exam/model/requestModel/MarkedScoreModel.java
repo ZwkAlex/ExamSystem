@@ -1,6 +1,6 @@
 package com.group.exam.model.requestModel;
 
-public class MarkedAnswerModel {
+public class MarkedScoreModel {
     private String questionID;
     private double score;
 

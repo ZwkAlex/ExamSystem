@@ -3,7 +3,7 @@ package com.group.exam.model.requestModel;
 
 public class AssignMajorExamRequest  {
     private String examID;
-    private String smajorID;
+    private String sMajorID;
 
     public String getExamID() {
         return examID;
@@ -13,11 +13,11 @@ public class AssignMajorExamRequest  {
         this.examID = examID;
     }
 
-    public String getSmajorID() {
-        return smajorID;
+    public String getsMajorID() {
+        return sMajorID;
     }
 
-    public void setSmajorID(String smajorID) {
-        this.smajorID = smajorID;
+    public void setsMajorID(String sMajorID) {
+        this.sMajorID = sMajorID;
     }
 }

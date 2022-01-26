@@ -5,7 +5,7 @@ import java.util.List;
 public class MarkedExamRequest {
     private String sID;
     private String examID;
-    private List<MarkedAnswerModel> markedAnswers;
+    private List<MarkedScoreModel> scores;
 
     public String getsID() {
         return sID;
@@ -23,11 +23,11 @@ public class MarkedExamRequest {
         this.examID = examID;
     }
 
-    public List<MarkedAnswerModel> getMarkedAnswers() {
-        return markedAnswers;
+    public List<MarkedScoreModel> getScores() {
+        return scores;
     }
 
-    public void setMarkedAnswers(List<MarkedAnswerModel> markedAnswers) {
-        this.markedAnswers = markedAnswers;
+    public void setScores(List<MarkedScoreModel> scores) {
+        this.scores = scores;
     }
 }

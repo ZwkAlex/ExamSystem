@@ -1,5 +1,7 @@
 package com.group.exam.model.responseModel;
 
+import com.group.exam.model.daoModel.CourseDao;
+import com.group.exam.model.daoModel.ExamDao;
 import com.group.exam.model.entity.Course;
 import com.group.exam.model.entity.Exam;
 import com.group.exam.model.entity.Teacher;
@@ -11,7 +13,7 @@ public class StudentExamInfoResponse extends StudentExamResponse {
     private boolean isValid;
     private String status;
 
-    public StudentExamInfoResponse(Course course, Exam exam, Teacher teacher) {
+    public StudentExamInfoResponse(CourseDao course, ExamDao exam, Teacher teacher) {
         super(course,exam);
         tName = teacher.gettName();
     }

@@ -1,6 +1,8 @@
 package com.group.exam.model.responseModel;
 
 
+import com.group.exam.model.daoModel.CourseDao;
+import com.group.exam.model.daoModel.ExamDao;
 import com.group.exam.model.entity.Course;
 import com.group.exam.model.entity.Exam;
 import com.group.exam.util.ExamUtil;
@@ -13,7 +15,7 @@ public class StudentExamResponse {
     private String startDate;
     private String endDate;
 
-    public StudentExamResponse(Course course, Exam exam) {
+    public StudentExamResponse(CourseDao course, ExamDao exam) {
         examID = exam.getExamID();
         courseName = course.getCourseName();
         description = course.getDescription();

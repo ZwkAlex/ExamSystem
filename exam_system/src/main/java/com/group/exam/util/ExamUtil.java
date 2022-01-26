@@ -58,9 +58,11 @@ public class ExamUtil {
     public static String Score2String(double score,int status){
         switch(ExamStatus.get(status)){
             case MARKED:
-                return String.format("%.2f 分", score);
+                return String.format("%.1f 分", score);
             case CANCELLED:
                 return ExamStatus.CANCELLED.getMsg();
+            case DELETED:
+                return score>=0?String.format("%.1f 分", score):"-";
             default:
                 return "-";
         }
@@ -86,11 +88,11 @@ public class ExamUtil {
         switch(question.getType()){
             case SINGLE:
                 answer = answerList.get(0);
-                sb.append(answer).append(".").append(question.getOptions().get(answer.charAt(0)-65));
+                sb.append(answer).append(". ").append(question.getOptions().get(answer.charAt(0)-65));
                 break;
             case MULTI:
                 for(String x : answerList){
-                    sb.append(x).append(".").append(question.getOptions().get(x.charAt(0)-65)).append("\n");
+                    sb.append(x).append(". ").append(question.getOptions().get(x.charAt(0)-65)).append("\n");
                 }
                 break;
             case JUDGE:
@@ -103,7 +105,7 @@ public class ExamUtil {
                 break;
             default:
                 for(int i = 0; i< answerList.size();i++){
-                    sb.append(i+1).append(".").append(answerList.get(i)).append("\n");
+                    sb.append(i+1).append(". ").append(answerList.get(i)).append("\n");
                 }
             }
 
@@ -118,10 +120,16 @@ public class ExamUtil {
             case BLANK:
             case SINGLE:
             case JUDGE:
-                autoMark.setResult(studentAnswer.get(0).equals(trueAnswer.get(0)));
-                autoMark.setScore(score);
+                boolean result = studentAnswer.get(0).equals(trueAnswer.get(0));
+                autoMark.setResult(result);
+                autoMark.setScore(result?score:0);
                 break;
             case MULTI:
+                if(studentAnswer.size() != trueAnswer.size()){
+                    autoMark.setResult(false);
+                    autoMark.setScore(0);
+                    return autoMark;
+                }
                 for(String x : studentAnswer){
                     if(!trueAnswer.contains(x)){
                         autoMark.setResult(false);

@@ -3,6 +3,7 @@ package com.group.exam.model.responseModel;
 import com.group.exam.model.cusEnum.ExamStatus;
 import com.group.exam.model.entity.Student;
 import com.group.exam.model.entity.StudentExam;
+import com.group.exam.util.ExamUtil;
 
 public class StudentNeedExam{
     private String sID;
@@ -11,14 +12,14 @@ public class StudentNeedExam{
     private String mName;
     private String sMajorID;
     private String status;
-    private double score;
+    private String score;
 
     public StudentNeedExam(){}
 
     public void set(StudentExam studentExam){
         this.sID = studentExam.getsID();
         this.status = ExamStatus.get(studentExam.getStatus()).getMsg();
-        this.score = studentExam.getScore();
+        this.score = ExamUtil.Score2String(studentExam.getScore(), studentExam.getStatus());
     }
 
     public void set(Student student){
@@ -44,11 +45,11 @@ public class StudentNeedExam{
         this.status = status;
     }
 
-    public double getScore() {
+    public String getScore() {
         return score;
     }
 
-    public void setScore(double score) {
+    public void setScore(String score) {
         this.score = score;
     }
 

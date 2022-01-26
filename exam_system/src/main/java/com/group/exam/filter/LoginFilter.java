@@ -53,11 +53,16 @@ public class LoginFilter extends OncePerRequestFilter {
                 } else {
                     throw new Exception();
                 }
-                chain.doFilter(request, response);
             } catch (Exception e) {
                 SecurityContextHolder.clearContext();
                 ResponseUtil.ok(response, ResponseUtil.tokenError("错误的Token"));
                 e.printStackTrace();
+            }
+            try{
+                chain.doFilter(request, response);
+            }catch (Exception e) {
+                e.printStackTrace();
+                ResponseUtil.ok(response, ResponseUtil.error("服务器发生未知的错误"));
             }
 
         }else {

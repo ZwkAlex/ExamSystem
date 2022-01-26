@@ -24,9 +24,9 @@ public interface QuestionMapper {
     @Delete("DELETE FROM question WHERE questionid=#{questionID}")
     int deleteQuestion(@Param("questionID") String questionID);
 
-    @Update("UPDATE  student SET examID = #{examID}, type = #{type}, title = #{title},  " +
+    @Update("UPDATE  question SET examID = #{examID}, type = #{type}, title = #{title},  " +
             "options = #{options}, score = #{score}  WHERE questionID = #{questionID}")
-    int updateStudent(QuestionDao question);
+    int updateQuestion(QuestionDao question);
 
     @Delete("DELETE FROM question WHERE examid=#{examID}")
     int deleteAllQuestionsByExamID(@Param("examID") String examID);
